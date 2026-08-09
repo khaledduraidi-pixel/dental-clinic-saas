@@ -1,32 +1,190 @@
-# React + TypeScript + Vite
+# عيادتي (Eyadati)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+تطبيق ويب لإدارة عيادات الأسنان: جدولة المواعيد، وتقليل حالات عدم الحضور عبر
+رسائل تذكير تلقائية على واتساب قبل كل موعد. مبني بالعربية أولاً (RTL) لعيادات
+الأسنان في العالم العربي.
 
-Currently, two official plugins are available:
+## التقنيات المستخدمة
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **الواجهة الأمامية**: Vite + React + TypeScript + Tailwind CSS، مع Framer
+  Motion للحركة، و`date-fns` للتعامل مع التواريخ العربية.
+- **الخلفية**: Supabase (قاعدة بيانات Postgres + المصادقة + Row Level
+  Security + Edge Functions على Deno + جدولة عبر pg_cron).
+- **واتساب**: WhatsApp Cloud API من Meta (رسائل قوالب + أزرار رد سريع).
 
-## React Compiler
+## التشغيل محلياً
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. المتطلبات
 
-## Expanding the Oxlint configuration
+- Node.js 20 أو أحدث
+- حساب [Supabase](https://supabase.com) (مجاني للبدء)
+- لاحقاً: حساب Meta for Developers مع رقم واتساب Business (للإرسال المباشر
+  فقط — التطبيق يعمل بالكامل بدونه في **الوضع التجريبي**)
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+### 2. تثبيت الحزم
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+### 3. متغيرات البيئة
+
+انسخ `.env.example` إلى `.env.local` واملأ القيم:
+
+```bash
+cp .env.example .env.local
+```
+
+| المتغير | أين تجده | ملاحظات |
+|---|---|---|
+| `VITE_SUPABASE_URL` | لوحة تحكم Supabase → Project Settings → API | رابط المشروع |
+| `VITE_SUPABASE_ANON_KEY` | نفس الصفحة | مفتاح `anon` العام، آمن للواجهة الأمامية |
+| `VITE_WHATSAPP_MOCK` | — | اتركه `true` محلياً. عند `false` يصبح وضع الإرسال المباشر متاحاً للاختيار من الإعدادات (لا يزال يحتاج ربط حساب واتساب فعلي) |
+
+المتغيرات التالية تخص Edge Functions فقط (تُضبط كأسرار على مشروع Supabase،
+وليس في `.env.local` — انظر القسم الخاص بواتساب أدناه):
+
+- `WHATSAPP_CLOUD_API_TOKEN`
+- `WHATSAPP_APP_SECRET`
+- `WHATSAPP_WEBHOOK_VERIFY_TOKEN`
+
+### 4. تشغيل قاعدة البيانات
+
+يحتاج المشروع إلى [Supabase CLI](https://supabase.com/docs/guides/cli):
+
+```bash
+npx supabase link --project-ref <project-ref>
+npx supabase db push
+```
+
+هذا الأمر يطبّق كل الملفات في `supabase/migrations/` بالترتيب:
+
+1. `0001_init.sql` — الجداول الأساسية (العيادات، الأطباء، المرضى، المواعيد،
+   التذكيرات، سجل الرسائل) وسياسات RLS.
+2. `0002_appointment_overlap_guard.sql` — يمنع حجز موعدين متداخلين لنفس
+   الطبيب على مستوى قاعدة البيانات.
+3. `0003_send_reminders_cron.sql` — يجدول إرسال التذكيرات كل 15 دقيقة (انظر
+   قسم واتساب أدناه لإكمال إعداده).
+
+لبيانات تجريبية جاهزة للاختبار (عيادة + أطباء + مرضى + مواعيد)، شغّل أيضاً:
+
+```bash
+npx supabase db query --linked -f supabase/seed.sql
+```
+
+(بيانات الدخول التجريبية داخل نفس الملف — هذه فقط للتطوير المحلي.)
+
+### 5. تشغيل التطبيق
+
+```bash
+npm run dev
+```
+
+يفتح على `http://localhost:5173`. يبدأ التسجيل من `/signup`.
+
+## البيانات المخزّنة
+
+عمداً، لا يخزّن التطبيق أي بيانات طبية. البيانات المحفوظة عن كل مريض هي:
+الاسم، رقم الهاتف، وقت الموعد، ونوع الزيارة فقط (كشف، تنظيف، حشوة... إلخ) —
+بدون تشخيصات أو سجلات علاجية.
+
+## وضعا الإرسال: تجريبي ومباشر
+
+كل عيادة لها وضع إرسال مستقل (من الإعدادات ← ربط واتساب):
+
+- **تجريبي (الافتراضي)**: التذكيرات "تُرسل" داخل المتصفح فقط — تُسجَّل في
+  سجل الرسائل ولا تصل فعلياً لأي رقم. مناسب للتجربة والعرض بدون أي إعداد.
+- **مباشر**: تُرسَل فعلياً عبر واتساب Cloud API، عن طريق دالة `send-reminders`
+  التي يستدعيها pg_cron كل 15 دقيقة. يتطلب إكمال الإعداد أدناه، وهو غير متاح
+  للاختيار في الإعدادات إلا بعد ضبط `VITE_WHATSAPP_MOCK=false` على النشر.
+
+## ربط واتساب للإرسال المباشر
+
+### 1. حساب واتساب Business
+
+1. أنشئ تطبيقاً على [Meta for Developers](https://developers.facebook.com)
+   من نوع Business، وأضف منتج **WhatsApp**.
+2. من WhatsApp → API Setup، احصل على **رقم الهاتف المُختبر** (أو اربط رقماً
+   حقيقياً لاحقاً) وانسخ **Phone Number ID** — هذا ما يُدخل في الإعدادات ←
+   ربط واتساب ← معرّف رقم واتساب.
+3. أنشئ **رمز وصول دائم** (System User Access Token) بصلاحية
+   `whatsapp_business_messaging`، واحفظه كسر على Supabase:
+
+   ```bash
+   npx supabase secrets set WHATSAPP_CLOUD_API_TOKEN=<التوكن>
+   ```
+
+### 2. اعتماد قالب الرسالة
+
+من WhatsApp Manager ← Message Templates، أنشئ قالباً جديداً بهذه المواصفات
+(يجب أن يطابق النص الموجود في `src/lib/whatsapp.ts` و
+`supabase/functions/_shared/whatsapp-template.ts` حرفياً):
+
+- **الاسم**: `appointment_reminder_ar`
+- **الفئة**: Utility
+- **اللغة**: العربية (ar)
+- **النص**:
+  > مرحباً {{1}}، هذا تذكير بموعدك في {{2}} يوم {{3}} الساعة {{4}}. للتأكيد
+  > اضغط "تأكيد الموعد"، ولطلب التأجيل اضغط "أريد التأجيل".
+- **الأزرار** (Quick Reply، اثنان): "تأكيد الموعد" و"أريد التأجيل"
+
+انتظر موافقة Meta على القالب (عادة دقائق إلى ساعات). أي تعديل على نص القالب
+لاحقاً يتطلب اعتماداً جديداً — يجب تحديث النسختين في الكود معاً عند التعديل.
+
+### 3. نشر Edge Functions
+
+```bash
+npx supabase functions deploy send-reminders
+npx supabase functions deploy whatsapp-webhook
+```
+
+### 4. ضبط الأسرار المطلوبة للدوال
+
+```bash
+npx supabase secrets set WHATSAPP_CLOUD_API_TOKEN=<توكن الوصول>
+npx supabase secrets set WHATSAPP_APP_SECRET=<App Secret من إعدادات التطبيق على Meta>
+npx supabase secrets set WHATSAPP_WEBHOOK_VERIFY_TOKEN=<نص عشوائي من اختيارك>
+```
+
+### 5. تفعيل جدولة الإرسال (pg_cron)
+
+الترحيل `0003_send_reminders_cron.sql` يُنشئ الجدولة، لكنه يقرأ رابط الدالة
+ومفتاح الخدمة من Supabase Vault بدل تضمينهما في الكود (حماية للأسرار). بعد
+تطبيق الترحيل، نفّذ مرة واحدة في محرر SQL على لوحة تحكم Supabase:
+
+```sql
+select vault.create_secret(
+  'https://<project-ref>.supabase.co/functions/v1/send-reminders',
+  'edge_function_url'
+);
+select vault.create_secret('<service-role-key>', 'service_role_key');
+```
+
+(تجد `project-ref` و`service-role-key` في Project Settings → API.)
+
+### 6. تسجيل رابط الويبهوك (Webhook)
+
+من إعدادات تطبيق واتساب على Meta ← Webhooks:
+
+- **رابط الاستدعاء**: `https://<project-ref>.supabase.co/functions/v1/whatsapp-webhook`
+- **رمز التحقق (Verify Token)**: نفس القيمة التي ضبطتها في
+  `WHATSAPP_WEBHOOK_VERIFY_TOKEN`
+- اشترك في حقل `messages` ضمن WhatsApp Business Account.
+
+### 7. تفعيل الوضع المباشر
+
+1. اضبط `VITE_WHATSAPP_MOCK=false` في بيئة النشر (Vercel وغيرها) وأعد النشر
+   — هذا يفتح خيار "مباشر" في إعدادات كل عيادة (يبقى مقفلاً بدونه).
+2. من داخل التطبيق: الإعدادات ← ربط واتساب ← اختر "مباشر"، أدخل معرّف رقم
+   واتساب، ثم احفظ.
+
+من هذه اللحظة، تُرسَل تذكيرات هذه العيادة عبر واتساب فعلياً، وردود المرضى
+على أزرار "تأكيد الموعد" / "أريد التأجيل" تُحدّث حالة الموعد تلقائياً.
+
+## ملاحظة حول الاختبار
+
+دالتا `send-reminders` و`whatsapp-webhook` تعملان على بيئة Deno (كما تتطلب
+Supabase Edge Functions)، ولم يتوفر تشغيل Deno فعلياً أثناء التطوير — تم
+التحقق منهما بمراجعة الكود بعناية دون تنفيذ حقيقي. يُنصح باختبارهما على
+مشروع Supabase حقيقي (وضع تجريبي أولاً، بعدد صغير من المواعيد) قبل الاعتماد
+عليهما في الإنتاج.
