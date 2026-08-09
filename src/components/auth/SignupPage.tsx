@@ -1,10 +1,17 @@
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import ar from '../../i18n/ar'
+import Button from '../ui/Button'
 
 export default function SignupPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-bg px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-surface p-8 shadow-lg">
+      <motion.div
+        className="w-full max-w-sm rounded-2xl bg-surface p-8 shadow-lg"
+        initial={{ opacity: 0, y: 12, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: 'spring', bounce: 0, duration: 0.45 }}
+      >
         <h1 className="text-center text-lg font-bold text-primary">{ar.appName}</h1>
         <h2 className="mt-1 text-center text-sm text-text-muted">{ar.auth_signupTitle}</h2>
 
@@ -49,12 +56,9 @@ export default function SignupPage() {
               className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
           </div>
-          <button
-            type="submit"
-            className="mt-2 h-11 w-full rounded-xl bg-primary text-sm font-medium text-white hover:bg-primary-dark"
-          >
+          <Button type="submit" className="mt-2 w-full">
             {ar.auth_signupButton}
-          </button>
+          </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-text-muted">
@@ -63,7 +67,7 @@ export default function SignupPage() {
             {ar.auth_goLogin}
           </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   )
 }

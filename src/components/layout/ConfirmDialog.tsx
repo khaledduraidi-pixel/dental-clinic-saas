@@ -1,4 +1,6 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import ar from '../../i18n/ar'
+import Button from '../ui/Button'
 
 interface ConfirmDialogProps {
   open: boolean
@@ -9,6 +11,8 @@ interface ConfirmDialogProps {
   onCancel: () => void
 }
 
+// Scrim and panel animate independently so the panel can be interrupted and
+// re-targeted (e.g. rapid open/close) without waiting on the scrim's fade.
 export default function ConfirmDialog({
   open,
   title,
@@ -17,33 +21,38 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  if (!open) return null
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-sm rounded-2xl bg-surface p-6 shadow-2xl">
-        <h2 className="text-lg font-bold text-text">{title}</h2>
-        <p className="mt-2 text-sm leading-relaxed text-text-muted">{body}</p>
-        <div className="mt-6 flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded-xl border border-border px-4 py-2 text-sm font-medium text-text hover:bg-bg"
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={onCancel}
+        >
+          <motion.div
+            className="w-full max-w-sm rounded-2xl bg-surface p-6 shadow-2xl"
+            initial={{ opacity: 0, scale: 0.95, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
+            onClick={(e) => e.stopPropagation()}
           >
-            {ar.common_no}
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className={
-              'rounded-xl px-4 py-2 text-sm font-medium text-white ' +
-              (danger ? 'bg-error hover:opacity-90' : 'bg-primary hover:bg-primary-dark')
-            }
-          >
-            {ar.common_yes}
-          </button>
-        </div>
-      </div>
-    </div>
+            <h2 className="text-lg font-bold text-text">{title}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-text-muted">{body}</p>
+            <div className="mt-6 flex justify-end gap-3">
+              <Button variant="secondary" onClick={onCancel}>
+                {ar.common_no}
+              </Button>
+              <Button variant={danger ? 'danger' : 'primary'} onClick={onConfirm}>
+                {ar.common_yes}
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }

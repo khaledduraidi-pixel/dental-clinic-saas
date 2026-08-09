@@ -9,6 +9,8 @@ const ar = {
   nav_dashboard: 'لوحة التحكم',
   nav_settings: 'الإعدادات',
   nav_logout: 'تسجيل الخروج',
+  nav_logoutConfirmTitle: 'تسجيل الخروج؟',
+  nav_logoutConfirmBody: 'سيتم تسجيل خروجك من الحساب الحالي.',
 
   // Auth
   auth_loginTitle: 'تسجيل الدخول',
