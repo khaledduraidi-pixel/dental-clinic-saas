@@ -69,6 +69,7 @@ const ar = {
   appt_selectDoctor: 'اختر الطبيب',
   appt_lastVisit: 'آخر زيارة',
   appt_firstVisit: 'هذه أول زيارة لهذا المريض',
+  appt_conflictError: 'هذا الطبيب لديه موعد آخر في هذا الوقت',
 
   // Visit types
   visitType_checkup: 'كشف أول',
