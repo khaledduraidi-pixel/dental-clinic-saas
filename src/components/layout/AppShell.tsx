@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
 import ConfirmDialog from './ConfirmDialog'
+import { useAuth } from '../../hooks/useAuth'
 
 const navItems = [
   { to: '/', label: ar.nav_calendar, end: true },
@@ -49,6 +50,7 @@ function NavItem({ to, label, end }: { to: string; label: string; end: boolean }
 }
 
 export default function AppShell({ children }: { children: ReactNode }) {
+  const { signOut } = useAuth()
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false)
 
   return (
@@ -81,7 +83,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
         body={ar.nav_logoutConfirmBody}
         danger={false}
         onCancel={() => setLogoutConfirmOpen(false)}
-        onConfirm={() => setLogoutConfirmOpen(false)}
+        onConfirm={() => {
+          setLogoutConfirmOpen(false)
+          void signOut()
+        }}
       />
     </div>
   )
