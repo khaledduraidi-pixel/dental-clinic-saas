@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { MotionConfig } from 'framer-motion'
 import { AuthProvider, useAuth } from './hooks/useAuth'
+import { ClinicProvider } from './hooks/useClinic'
 import AppShell from './components/layout/AppShell'
 import Skeleton from './components/layout/Skeleton'
 import LoginPage from './components/auth/LoginPage'
@@ -40,65 +41,67 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route
-              path="/login"
-              element={
-                <RedirectIfAuthed>
-                  <LoginPage />
-                </RedirectIfAuthed>
-              }
-            />
-            <Route
-              path="/signup"
-              element={
-                <RedirectIfAuthed>
-                  <SignupPage />
-                </RedirectIfAuthed>
-              }
-            />
-            <Route
-              path="/"
-              element={
-                <RequireAuth>
-                  <AppShell>
-                    <CalendarPage />
-                  </AppShell>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/patients"
-              element={
-                <RequireAuth>
-                  <AppShell>
-                    <PatientsPage />
-                  </AppShell>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <RequireAuth>
-                  <AppShell>
-                    <DashboardPage />
-                  </AppShell>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <RequireAuth>
-                  <AppShell>
-                    <SettingsPage />
-                  </AppShell>
-                </RequireAuth>
-              }
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <ClinicProvider>
+            <Routes>
+              <Route
+                path="/login"
+                element={
+                  <RedirectIfAuthed>
+                    <LoginPage />
+                  </RedirectIfAuthed>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <RedirectIfAuthed>
+                    <SignupPage />
+                  </RedirectIfAuthed>
+                }
+              />
+              <Route
+                path="/"
+                element={
+                  <RequireAuth>
+                    <AppShell>
+                      <CalendarPage />
+                    </AppShell>
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/patients"
+                element={
+                  <RequireAuth>
+                    <AppShell>
+                      <PatientsPage />
+                    </AppShell>
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <RequireAuth>
+                    <AppShell>
+                      <DashboardPage />
+                    </AppShell>
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <RequireAuth>
+                    <AppShell>
+                      <SettingsPage />
+                    </AppShell>
+                  </RequireAuth>
+                }
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </ClinicProvider>
         </AuthProvider>
       </BrowserRouter>
     </MotionConfig>

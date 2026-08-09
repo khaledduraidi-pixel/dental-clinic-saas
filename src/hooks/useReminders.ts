@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { formatDateAr, formatTimeAr } from '../lib/dates'
-import { isWhatsAppMockMode, renderReminderMessage } from '../lib/whatsapp'
+import { renderReminderMessage } from '../lib/whatsapp'
 import type { Clinic } from '../types'
 
 // Keeps the single reminders row for an appointment in sync with its
@@ -89,12 +89,13 @@ async function mockSend(
 // Manual "resend reminder" — works on demand regardless of scheduled_for,
 // and creates the reminder row first if none exists yet (e.g. the
 // appointment was booked with too little lead time to auto-generate one).
+// clinic.whatsapp_mode (set from the settings connection panel) decides the
+// transport: 'mock' sends right here, 'live' hands off to the same
+// send-reminders Edge Function pg_cron calls — the client never talks to
+// Meta directly, so a "live" resend can only queue the send and report that
+// it was queued; messages_log shows the real outcome moments later.
 export function useReminders() {
   async function resendReminder(appointment: AppointmentForReminder, clinic: Clinic) {
-    if (!isWhatsAppMockMode()) {
-      return { error: 'sending is only available in mock mode until WhatsApp is connected' }
-    }
-
     const { data: existing } = await supabase
       .from('reminders')
       .select('*')
@@ -115,6 +116,17 @@ export function useReminders() {
         .single()
       if (insertError) return { error: insertError.message }
       reminderId = created.id
+    } else if (existing.status !== 'pending') {
+      const { error: reopenError } = await supabase
+        .from('reminders')
+        .update({ status: 'pending', scheduled_for: new Date().toISOString() })
+        .eq('id', reminderId)
+      if (reopenError) return { error: reopenError.message }
+    }
+
+    if (clinic.whatsapp_mode === 'live') {
+      const { error: invokeError } = await supabase.functions.invoke('send-reminders')
+      return { error: invokeError ? invokeError.message : null }
     }
 
     return mockSend(reminderId!, appointment, clinic)
@@ -125,15 +137,17 @@ export function useReminders() {
 
 const POLL_INTERVAL_MS = 30_000
 
-// Simulates the pg_cron-driven send-reminders Edge Function client-side,
-// purely so the pipeline is demoable before that function exists (Step 9).
-// Once live mode is wired up, sending is the server's job on its own
-// schedule — this must not run then, so it's gated on mock mode.
+// Simulates the pg_cron-driven send-reminders Edge Function client-side, so
+// a clinic still in mock mode can demo the full pipeline with zero setup.
+// Once a clinic switches to live (settings connection panel), sending that
+// clinic's reminders becomes the server's job on its own schedule — this
+// must not also fire for it, hence gating on this specific clinic's mode
+// rather than a single global flag.
 export function useReminderAutoProcessor(clinic: Clinic | null) {
   const processingRef = useRef(false)
 
   useEffect(() => {
-    if (!clinic || !isWhatsAppMockMode()) return
+    if (!clinic || clinic.whatsapp_mode === 'live') return
 
     async function tick() {
       if (processingRef.current || !clinic) return

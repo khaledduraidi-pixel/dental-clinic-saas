@@ -129,6 +129,7 @@ const ar = {
   settings_whatsapp: 'ربط واتساب',
   settings_save: 'حفظ التغييرات',
   settings_saved: 'تم الحفظ بنجاح',
+  settings_reminderTimingHours: 'ساعة',
 
   // Doctors
   doctor_name: 'اسم الطبيب',
@@ -150,6 +151,12 @@ const ar = {
   whatsapp_messagesLog: 'سجل الرسائل',
   whatsapp_messagesLogEmpty: 'لا توجد رسائل مرسلة بعد',
   whatsapp_templatePreview: 'معاينة نص الرسالة',
+  whatsapp_mode: 'وضع الإرسال',
+  whatsapp_modeMockOption: 'تجريبي (محاكاة)',
+  whatsapp_modeLiveOption: 'مباشر (واتساب Cloud API)',
+  whatsapp_liveUnavailable: 'الإرسال المباشر غير متاح بعد لهذا التطبيق — يحتاج إلى ربط حساب واتساب Business من قبل مسؤول النظام أولاً.',
+  whatsapp_phoneNumberIdHelp: 'يظهر في لوحة تحكم Meta for Developers ضمن WhatsApp > API Setup',
+  whatsapp_sampleName: 'سارة أحمد',
 
   // Common
   common_save: 'حفظ',
