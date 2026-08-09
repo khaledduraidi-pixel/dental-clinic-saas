@@ -62,10 +62,10 @@ export default function PatientDrawer({ patient, onClose, onEdit, onDelete }: Pa
           onClick={onClose}
         >
           <motion.aside
-            className="fixed inset-y-0 end-0 flex w-full max-w-md flex-col bg-surface shadow-2xl"
-            initial={{ x: '-100%' }}
+            className="fixed inset-y-0 start-0 flex w-full max-w-md flex-col bg-surface shadow-2xl"
+            initial={{ x: '100%' }}
             animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
+            exit={{ x: '100%' }}
             transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
             onClick={(e) => e.stopPropagation()}
           >
