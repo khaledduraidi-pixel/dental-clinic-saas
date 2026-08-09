@@ -111,36 +111,39 @@ export default function CalendarPage() {
         <Button onClick={() => openNewAppointment(null, null)}>{ar.calendar_newAppointment}</Button>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-surface p-3">
-        <div className="flex items-center gap-2">
-          <Button variant="secondary" className="h-9 px-3 text-xs" onClick={goToday}>
-            {ar.calendar_today}
-          </Button>
-          <Button variant="ghost" className="h-9 w-9 px-0" onClick={goPrevious} aria-label={ar.common_previous}>
-            <ChevronIcon direction="start" />
-          </Button>
-          <Button variant="ghost" className="h-9 w-9 px-0" onClick={goNext} aria-label={ar.common_next}>
-            <ChevronIcon direction="end" />
-          </Button>
-          <span className="ms-2 text-sm font-medium text-text">{rangeLabel}</span>
+      <div className="mt-4 rounded-2xl border border-border bg-surface p-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" className="h-9 px-3 text-xs" onClick={goToday}>
+              {ar.calendar_today}
+            </Button>
+            <Button variant="ghost" className="h-9 w-9 px-0" onClick={goPrevious} aria-label={ar.common_previous}>
+              <ChevronIcon direction="start" />
+            </Button>
+            <Button variant="ghost" className="h-9 w-9 px-0" onClick={goNext} aria-label={ar.common_next}>
+              <ChevronIcon direction="end" />
+            </Button>
+          </div>
+
+          <div className="flex overflow-hidden rounded-xl border border-border">
+            <button
+              type="button"
+              onClick={() => setViewMode('day')}
+              className={'px-4 py-2 text-sm font-medium ' + (viewMode === 'day' ? 'bg-primary-soft text-primary-dark' : 'text-text-muted')}
+            >
+              {ar.calendar_dayView}
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('week')}
+              className={'px-4 py-2 text-sm font-medium ' + (viewMode === 'week' ? 'bg-primary-soft text-primary-dark' : 'text-text-muted')}
+            >
+              {ar.calendar_weekView}
+            </button>
+          </div>
         </div>
 
-        <div className="flex overflow-hidden rounded-xl border border-border">
-          <button
-            type="button"
-            onClick={() => setViewMode('day')}
-            className={'px-4 py-2 text-sm font-medium ' + (viewMode === 'day' ? 'bg-primary-soft text-primary-dark' : 'text-text-muted')}
-          >
-            {ar.calendar_dayView}
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('week')}
-            className={'px-4 py-2 text-sm font-medium ' + (viewMode === 'week' ? 'bg-primary-soft text-primary-dark' : 'text-text-muted')}
-          >
-            {ar.calendar_weekView}
-          </button>
-        </div>
+        <p className="mt-3 text-sm font-medium text-text">{rangeLabel}</p>
       </div>
 
       <div className="mt-4">
