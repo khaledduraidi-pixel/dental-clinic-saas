@@ -8,6 +8,7 @@ import { useClinic } from '../../hooks/useClinic'
 import { useDoctors } from '../../hooks/useDoctors'
 import { usePatients } from '../../hooks/usePatients'
 import { useAppointments, type AppointmentWithRelations } from '../../hooks/useAppointments'
+import { useReminderAutoProcessor, useReminders } from '../../hooks/useReminders'
 import DoctorFilterChips from './DoctorFilterChips'
 import DayView from './DayView'
 import WeekView from './WeekView'
@@ -60,7 +61,9 @@ export default function CalendarPage() {
   )
 
   const { appointments, loading, createAppointment, updateAppointment, setAppointmentStatus } =
-    useAppointments(rangeStart, rangeEnd)
+    useAppointments(rangeStart, rangeEnd, clinic)
+  const { resendReminder } = useReminders()
+  useReminderAutoProcessor(clinic)
 
   const startHour = clinic ? Number(clinic.working_hours_start.slice(0, 2)) : 8
   const endHour = clinic ? Number(clinic.working_hours_end.slice(0, 2)) : 20
@@ -199,7 +202,12 @@ export default function CalendarPage() {
         onClose={() => setSelectedAppointment(null)}
         onEdit={openEditAppointment}
         onChangeStatus={setAppointmentStatus}
-        onCancel={(id) => setAppointmentStatus(id, 'cancelled')}
+        onCancel={(id) =>
+          setAppointmentStatus(id, 'cancelled', selectedAppointment?.starts_at)
+        }
+        onResendReminder={
+          clinic ? (appointment) => resendReminder(appointment, clinic) : undefined
+        }
       />
     </div>
   )

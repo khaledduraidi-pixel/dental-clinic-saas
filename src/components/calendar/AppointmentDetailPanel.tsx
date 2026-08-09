@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
@@ -33,6 +33,7 @@ interface AppointmentDetailPanelProps {
   onEdit: (appointment: AppointmentWithRelations) => void
   onChangeStatus: (id: string, status: AppointmentStatus) => Promise<{ error: string | null }>
   onCancel: (id: string) => Promise<{ error: string | null }>
+  onResendReminder?: (appointment: AppointmentWithRelations) => Promise<{ error: string | null }>
 }
 
 export default function AppointmentDetailPanel({
@@ -42,8 +43,21 @@ export default function AppointmentDetailPanel({
   onEdit,
   onChangeStatus,
   onCancel,
+  onResendReminder,
 }: AppointmentDetailPanelProps) {
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false)
+  const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+
+  useEffect(() => {
+    setResendState('idle')
+  }, [appointment?.id])
+
+  async function handleResend() {
+    if (!appointment || !onResendReminder) return
+    setResendState('sending')
+    const { error } = await onResendReminder(appointment)
+    setResendState(error ? 'error' : 'sent')
+  }
 
   return (
     <AnimatePresence>
@@ -118,6 +132,25 @@ export default function AppointmentDetailPanel({
                   )}
                 </select>
               </div>
+
+              {onResendReminder && appointment.status !== 'cancelled' && (
+                <div>
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    loading={resendState === 'sending'}
+                    onClick={handleResend}
+                  >
+                    {ar.appt_resendReminder}
+                  </Button>
+                  {resendState === 'sent' && (
+                    <p className="mt-1.5 text-center text-sm text-success">{ar.appt_reminderResent}</p>
+                  )}
+                  {resendState === 'error' && (
+                    <p className="mt-1.5 text-center text-sm text-error">{ar.common_error}</p>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end gap-3 border-t border-border p-6">
