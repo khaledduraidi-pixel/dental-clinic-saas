@@ -8,11 +8,21 @@ import type { Patient } from '../../types'
 interface PatientFormModalProps {
   open: boolean
   patient: Patient | null
+  // Pre-fills the name field for a brand-new patient (e.g. what the
+  // receptionist already typed into the appointment modal's search box)
+  // without turning this into edit mode — only used when patient is null.
+  initialName?: string
   onSave: (name: string, phone: string, notes: string) => Promise<{ error: string | null }>
   onClose: () => void
 }
 
-export default function PatientFormModal({ open, patient, onSave, onClose }: PatientFormModalProps) {
+export default function PatientFormModal({
+  open,
+  patient,
+  initialName,
+  onSave,
+  onClose,
+}: PatientFormModalProps) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [notes, setNotes] = useState('')
@@ -22,12 +32,12 @@ export default function PatientFormModal({ open, patient, onSave, onClose }: Pat
 
   useEffect(() => {
     if (!open) return
-    setName(patient?.name ?? '')
+    setName(patient?.name ?? initialName ?? '')
     setPhone(patient?.phone ?? '')
     setPhoneValid(Boolean(patient?.phone))
     setNotes(patient?.notes ?? '')
     setError(null)
-  }, [open, patient])
+  }, [open, patient, initialName])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()

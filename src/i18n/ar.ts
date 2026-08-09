@@ -65,6 +65,8 @@ const ar = {
   appt_reminderResent: 'تم إرسال التذكير',
   appt_confirmCancelTitle: 'إلغاء الموعد؟',
   appt_confirmCancelBody: 'هل أنت متأكد من إلغاء هذا الموعد؟ سيتم إلغاء التذكير المرتبط به ولا يمكن التراجع عن هذا الإجراء.',
+  appt_noPatientsFound: 'لا توجد نتائج، يمكنك إضافة مريض جديد',
+  appt_selectDoctor: 'اختر الطبيب',
 
   // Visit types
   visitType_checkup: 'كشف أول',

@@ -66,12 +66,14 @@ export function usePatients() {
   }, [refresh])
 
   async function createPatient(name: string, phone: string, notes: string) {
-    const { error: insertError } = await supabase
+    const { data, error: insertError } = await supabase
       .from('patients')
       .insert({ name, phone, notes: notes || null })
-    if (insertError) return { error: insertError.message }
+      .select('*')
+      .single()
+    if (insertError) return { error: insertError.message, patient: null }
     await refresh()
-    return { error: null }
+    return { error: null, patient: data as Patient }
   }
 
   async function updatePatient(id: string, name: string, phone: string, notes: string) {

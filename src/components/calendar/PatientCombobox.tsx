@@ -1,0 +1,101 @@
+import { useEffect, useRef, useState } from 'react'
+import ar from '../../i18n/ar'
+import type { Patient } from '../../types'
+
+interface PatientComboboxProps {
+  patients: Patient[]
+  selectedPatientId: string | null
+  onSelect: (patient: Patient) => void
+  onAddNew: (initialName: string) => void
+}
+
+export default function PatientCombobox({
+  patients,
+  selectedPatientId,
+  onSelect,
+  onAddNew,
+}: PatientComboboxProps) {
+  const selected = patients.find((p) => p.id === selectedPatientId) ?? null
+  const [query, setQuery] = useState(selected?.name ?? '')
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setQuery(selected?.name ?? '')
+    // Only re-sync when the selected patient changes externally (e.g. the
+    // form resets for a different appointment), not while the user types.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPatientId])
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const q = query.trim().toLowerCase()
+  const qDigits = q.replace(/\D/g, '')
+  const matches = q
+    ? patients.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) || (qDigits !== '' && p.phone.replace(/\D/g, '').includes(qDigits)),
+      )
+    : patients
+
+  return (
+    <div ref={containerRef} className="relative">
+      <input
+        type="text"
+        value={query}
+        placeholder={ar.appt_searchPatient}
+        onChange={(e) => {
+          setQuery(e.target.value)
+          setOpen(true)
+        }}
+        onFocus={() => setOpen(true)}
+        className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+      />
+
+      {open && (
+        <div className="absolute z-30 mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-border bg-surface shadow-lg">
+          {matches.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => {
+                onSelect(p)
+                setQuery(p.name)
+                setOpen(false)
+              }}
+              className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-bg"
+            >
+              <span className="font-medium text-text">{p.name}</span>
+              <span className="text-xs text-text-muted" dir="ltr">
+                {p.phone}
+              </span>
+            </button>
+          ))}
+
+          {matches.length === 0 && (
+            <p className="px-3 py-2 text-sm text-text-muted">{ar.appt_noPatientsFound}</p>
+          )}
+
+          <button
+            type="button"
+            onClick={() => {
+              onAddNew(query.trim())
+              setOpen(false)
+            }}
+            className="flex w-full items-center gap-1.5 border-t border-border px-3 py-2 text-start text-sm font-medium text-primary hover:bg-primary-soft"
+          >
+            + {ar.appt_addNewPatient}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
