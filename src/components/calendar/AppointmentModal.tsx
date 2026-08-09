@@ -2,13 +2,23 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
+import { statusLabels } from '../ui/StatusChip'
 import PatientCombobox from './PatientCombobox'
 import PatientFormModal from '../patients/PatientFormModal'
-import { VISIT_TYPES } from '../../lib/visitTypes'
-import { toZonedInputParts, zonedWallTimeToUtc } from '../../lib/dates'
+import { supabase } from '../../lib/supabase'
+import { VISIT_TYPES, visitTypeLabel } from '../../lib/visitTypes'
+import { formatDateAr, toZonedInputParts, zonedWallTimeToUtc } from '../../lib/dates'
 import type { AppointmentInput, AppointmentWithRelations } from '../../hooks/useAppointments'
 import type { SlotParts } from './TimeGrid'
-import type { Doctor, Patient, VisitType } from '../../types'
+import type { AppointmentStatus, Doctor, Patient, VisitType } from '../../types'
+
+interface LastVisit {
+  id: string
+  starts_at: string
+  visit_type: VisitType
+  status: AppointmentStatus
+  notes: string | null
+}
 
 interface AppointmentModalProps {
   open: boolean
@@ -48,6 +58,8 @@ export default function AppointmentModal({
   const [saving, setSaving] = useState(false)
   const [addPatientOpen, setAddPatientOpen] = useState(false)
   const [addPatientInitialName, setAddPatientInitialName] = useState('')
+  const [lastVisit, setLastVisit] = useState<LastVisit | null>(null)
+  const [lastVisitLoading, setLastVisitLoading] = useState(false)
 
   useEffect(() => {
     if (!open) return
@@ -78,6 +90,39 @@ export default function AppointmentModal({
       setNotes('')
     }
   }, [open, appointment, initialDoctorId, initialSlot, clinicTimezone, doctors])
+
+  // Surfaces the patient's most recent past visit (date, visit type, status,
+  // and the free-text notes field) once selected, so a receptionist booking
+  // a follow-up sees what happened last time without leaving this modal —
+  // none of this is new data collection, it's already-stored, non-medical
+  // fields (visit type is a category like "تنظيف", never a diagnosis).
+  useEffect(() => {
+    if (!open || !patientId) {
+      setLastVisit(null)
+      return
+    }
+    let cancelled = false
+    setLastVisitLoading(true)
+
+    supabase
+      .from('appointments')
+      .select('id, starts_at, visit_type, status, notes')
+      .eq('patient_id', patientId)
+      .lt('starts_at', new Date().toISOString())
+      .order('starts_at', { ascending: false })
+      .limit(2)
+      .then(({ data }) => {
+        if (cancelled) return
+        const rows = (data as LastVisit[] | null) ?? []
+        const filtered = appointment ? rows.filter((r) => r.id !== appointment.id) : rows
+        setLastVisit(filtered[0] ?? null)
+        setLastVisitLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [open, patientId, appointment])
 
   async function handleAddPatientSave(name: string, phone: string, notesValue: string) {
     const result = await onCreatePatient(name, phone, notesValue)
@@ -151,6 +196,19 @@ export default function AppointmentModal({
                       setAddPatientOpen(true)
                     }}
                   />
+                  {patientId && !lastVisitLoading && (
+                    <p className="mt-1.5 rounded-lg bg-bg px-2.5 py-1.5 text-xs text-text-muted">
+                      {lastVisit ? (
+                        <>
+                          {ar.appt_lastVisit}: {formatDateAr(lastVisit.starts_at, clinicTimezone)} —{' '}
+                          {visitTypeLabel(lastVisit.visit_type)} · {statusLabels[lastVisit.status]}
+                          {lastVisit.notes && <> — {lastVisit.notes}</>}
+                        </>
+                      ) : (
+                        ar.appt_firstVisit
+                      )}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

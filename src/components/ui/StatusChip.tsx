@@ -13,7 +13,7 @@ const statusStyles: Record<AppointmentStatus, string> = {
   cancelled: 'bg-gray-100 text-gray-400 line-through',
 }
 
-const statusLabels: Record<AppointmentStatus, string> = {
+export const statusLabels: Record<AppointmentStatus, string> = {
   scheduled: ar.status_scheduled,
   confirmed: ar.status_confirmed,
   reschedule_requested: ar.status_reschedule_requested,

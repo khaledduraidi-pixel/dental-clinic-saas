@@ -67,6 +67,8 @@ const ar = {
   appt_confirmCancelBody: 'هل أنت متأكد من إلغاء هذا الموعد؟ سيتم إلغاء التذكير المرتبط به ولا يمكن التراجع عن هذا الإجراء.',
   appt_noPatientsFound: 'لا توجد نتائج، يمكنك إضافة مريض جديد',
   appt_selectDoctor: 'اختر الطبيب',
+  appt_lastVisit: 'آخر زيارة',
+  appt_firstVisit: 'هذه أول زيارة لهذا المريض',
 
   // Visit types
   visitType_checkup: 'كشف أول',
