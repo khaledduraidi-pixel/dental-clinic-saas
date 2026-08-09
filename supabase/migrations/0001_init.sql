@@ -1,4 +1,4 @@
--- قريب (Qareeb) — dental clinic scheduling MVP
+-- عيادتي (Eyadati) — dental clinic scheduling MVP
 -- Core schema: clinics, staff membership, doctors, patients, appointments,
 -- reminders, and the WhatsApp messages log. Deliberately no medical data:
 -- name, phone, appointment time, and visit type only.

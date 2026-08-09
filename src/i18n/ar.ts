@@ -1,6 +1,6 @@
 // Every UI string in the app lives here. No hardcoded Arabic in components.
 const ar = {
-  appName: 'قريب',
+  appName: 'عيادتي',
   appTagline: 'إدارة عيادتك، وتذكير مرضاك تلقائياً',
 
   // Nav

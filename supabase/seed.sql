@@ -14,7 +14,7 @@
 begin;
 
 -- ---------------------------------------------------------------------------
--- Demo login: demo@qareeb.app / demo12345
+-- Demo login: demo@eyadati.app / demo12345
 -- ---------------------------------------------------------------------------
 
 insert into auth.users (
@@ -26,7 +26,7 @@ insert into auth.users (
   '00000000-0000-0000-0000-000000000000',
   '00000000-0000-0000-0000-000000000001',
   'authenticated', 'authenticated',
-  'demo@qareeb.app',
+  'demo@eyadati.app',
   crypt('demo12345', gen_salt('bf')),
   now(), '{"provider":"email","providers":["email"]}', '{}',
   now(), now(), '', '', '', ''
@@ -38,7 +38,7 @@ insert into auth.identities (
   '00000000-0000-0000-0000-000000000001',
   '00000000-0000-0000-0000-000000000001',
   '00000000-0000-0000-0000-000000000001',
-  '{"sub":"00000000-0000-0000-0000-000000000001","email":"demo@qareeb.app"}',
+  '{"sub":"00000000-0000-0000-0000-000000000001","email":"demo@eyadati.app"}',
   'email', now(), now(), now()
 ) on conflict (provider, provider_id) do nothing;
 
