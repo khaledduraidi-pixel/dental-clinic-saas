@@ -18,12 +18,12 @@
 // (no Deno runtime available here) — it has only been reviewed statically.
 // Verify it against a real Supabase project before relying on it.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { formatDateAr, formatTimeAr, REMINDER_TEMPLATE_NAME, renderReminderMessage } from '../_shared/whatsapp-template.ts'
+import { REMINDER_TEMPLATE_NAME, renderReminderMessage } from '../_shared/whatsapp-template.ts'
+import { formatDateAr, formatTimeAr } from '../_shared/dates.ts'
+import { sendTemplateMessage } from '../_shared/whatsapp-send.ts'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const WHATSAPP_CLOUD_API_TOKEN = Deno.env.get('WHATSAPP_CLOUD_API_TOKEN')
-const GRAPH_API_VERSION = 'v20.0'
 // Batch size per tick — comfortably above what a single-clinic MVP produces
 // in a 15-minute window, while bounding worst-case function runtime.
 const BATCH_LIMIT = 100
@@ -43,43 +43,6 @@ interface DueReminder {
     whatsapp_mode: 'mock' | 'live'
     whatsapp_phone_number_id: string | null
   } | null
-}
-
-async function sendWhatsAppTemplate(
-  phoneNumberId: string,
-  toE164: string,
-  bodyParams: [string, string, string, string],
-): Promise<string> {
-  if (!WHATSAPP_CLOUD_API_TOKEN) throw new Error('WHATSAPP_CLOUD_API_TOKEN is not set')
-
-  const res = await fetch(`https://graph.facebook.com/${GRAPH_API_VERSION}/${phoneNumberId}/messages`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${WHATSAPP_CLOUD_API_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      messaging_product: 'whatsapp',
-      to: toE164.replace(/^\+/, ''),
-      type: 'template',
-      template: {
-        name: REMINDER_TEMPLATE_NAME,
-        language: { code: 'ar' },
-        components: [
-          {
-            type: 'body',
-            parameters: bodyParams.map((text) => ({ type: 'text', text })),
-          },
-        ],
-      },
-    }),
-  })
-
-  const payload = await res.json().catch(() => null)
-  if (!res.ok) {
-    throw new Error(`WhatsApp send failed (${res.status}): ${JSON.stringify(payload)}`)
-  }
-  return payload?.messages?.[0]?.id ?? null
 }
 
 Deno.serve(async (req) => {
@@ -150,7 +113,7 @@ Deno.serve(async (req) => {
     })
 
     try {
-      const providerMessageId = await sendWhatsAppTemplate(clinic.whatsapp_phone_number_id, patient.phone, [
+      const providerMessageId = await sendTemplateMessage(clinic.whatsapp_phone_number_id, patient.phone, REMINDER_TEMPLATE_NAME, 'ar', [
         patient.name,
         clinic.name,
         formatDateAr(appointment.starts_at, clinic.timezone),

@@ -24,26 +24,3 @@ export function renderReminderMessage(params: ReminderMessageParams): string {
     .replace('{{3}}', params.dateLabel)
     .replace('{{4}}', params.timeLabel)
 }
-
-// Deno ships full ICU (same V8 engine as the browser build), so these can
-// be identical in behavior to src/lib/dates.ts's formatters — duplicated
-// here only because Edge Functions can't import from src/.
-export function formatDateAr(iso: string, timeZone: string): string {
-  return new Intl.DateTimeFormat('ar', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    numberingSystem: 'latn',
-    timeZone,
-  }).format(new Date(iso))
-}
-
-export function formatTimeAr(iso: string, timeZone: string): string {
-  return new Intl.DateTimeFormat('ar', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-    numberingSystem: 'latn',
-    timeZone,
-  }).format(new Date(iso))
-}
