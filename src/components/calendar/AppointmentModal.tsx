@@ -5,6 +5,7 @@ import Button from '../ui/Button'
 import { statusLabels } from '../ui/StatusChip'
 import PatientCombobox from './PatientCombobox'
 import PatientFormModal from '../patients/PatientFormModal'
+import TimeWheelPicker from '../ui/TimeWheelPicker'
 import { supabase } from '../../lib/supabase'
 import { VISIT_TYPES, visitTypeLabel } from '../../lib/visitTypes'
 import { formatDateAr, toZonedInputParts, zonedWallTimeToUtc } from '../../lib/dates'
@@ -82,8 +83,11 @@ export default function AppointmentModal({
         setDateStr(`${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`)
         setTimeStr(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
       } else {
-        setDateStr('')
-        setTimeStr('')
+        // No slot was clicked (e.g. the toolbar's "new appointment" button) —
+        // default to today and a sensible time rather than leaving the wheel
+        // picker with nothing to display.
+        setDateStr(toZonedInputParts(new Date().toISOString(), clinicTimezone).date)
+        setTimeStr('09:00')
       }
       setDuration(30)
       setVisitType('checkup')
@@ -270,14 +274,7 @@ export default function AppointmentModal({
                     <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="apptTime">
                       {ar.appt_time}
                     </label>
-                    <input
-                      id="apptTime"
-                      type="time"
-                      required
-                      value={timeStr}
-                      onChange={(e) => setTimeStr(e.target.value)}
-                      className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    />
+                    <TimeWheelPicker id="apptTime" value={timeStr} onChange={setTimeStr} />
                   </div>
                 </div>
 

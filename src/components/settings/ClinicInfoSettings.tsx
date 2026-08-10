@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
 import Skeleton from '../layout/Skeleton'
+import TimeWheelPicker from '../ui/TimeWheelPicker'
 import { useClinic } from '../../hooks/useClinic'
 
 const REMINDER_OPTIONS: (12 | 24 | 48)[] = [12, 24, 48]
@@ -94,27 +95,13 @@ export default function ClinicInfoSettings() {
                 <label className="mb-1 block text-xs text-text-muted" htmlFor="workingHoursStart">
                   {ar.settings_workingHoursFrom}
                 </label>
-                <input
-                  id="workingHoursStart"
-                  type="time"
-                  required
-                  value={hoursStart}
-                  onChange={(e) => setHoursStart(e.target.value)}
-                  className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
+                <TimeWheelPicker id="workingHoursStart" value={hoursStart} onChange={setHoursStart} />
               </div>
               <div>
                 <label className="mb-1 block text-xs text-text-muted" htmlFor="workingHoursEnd">
                   {ar.settings_workingHoursTo}
                 </label>
-                <input
-                  id="workingHoursEnd"
-                  type="time"
-                  required
-                  value={hoursEnd}
-                  onChange={(e) => setHoursEnd(e.target.value)}
-                  className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
+                <TimeWheelPicker id="workingHoursEnd" value={hoursEnd} onChange={setHoursEnd} />
               </div>
             </div>
           </div>
