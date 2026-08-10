@@ -20,6 +20,10 @@ export interface GridColumn {
   header: React.ReactNode
   date: Date // a plain calendar-navigation marker for "which day is this column" — never read as a real instant
   appointments: AppointmentWithRelations[]
+  // Shaded "off" bands, in minutes from the grid's own top edge — purely
+  // visual, never a booking restriction (a receptionist can still click
+  // and book inside a shaded band; see doctorSchedule.ts).
+  offHoursRanges?: { startMinutes: number; endMinutes: number }[]
 }
 
 interface TimeGridProps {
@@ -109,6 +113,20 @@ export default function TimeGrid({
               className="relative border-s border-border"
               style={{ height: totalHeight }}
             >
+              {col.offHoursRanges?.map((range, i) => (
+                <div
+                  key={i}
+                  className="pointer-events-none absolute inset-x-0"
+                  style={{
+                    top: range.startMinutes * pxPerMinute,
+                    height: (range.endMinutes - range.startMinutes) * pxPerMinute,
+                    backgroundColor: 'rgba(231, 229, 228, 0.45)', // --color-border, tinted
+                    backgroundImage:
+                      'repeating-linear-gradient(-45deg, rgba(120, 113, 108, 0.08) 0, rgba(120, 113, 108, 0.08) 1px, transparent 1px, transparent 8px)',
+                  }}
+                />
+              ))}
+
               {Array.from({ length: slotCount }).map((_, i) => {
                 const minutesFromStart = i * slotMinutes
                 const slot: SlotParts = {

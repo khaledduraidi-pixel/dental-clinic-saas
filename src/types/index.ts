@@ -52,6 +52,18 @@ export interface Doctor {
   updated_at: string
 }
 
+// 0=Sunday .. 6=Saturday — matches date-fns' weekStartsOn:0 used throughout
+// the calendar. A doctor with no rows at all falls back to the clinic's own
+// working_hours_start/end every day; once they have at least one row, only
+// the days present are working days.
+export interface DoctorAvailability {
+  id: string
+  doctor_id: string
+  day_of_week: number
+  start_time: string
+  end_time: string
+}
+
 export interface Patient {
   id: string
   clinic_id: string

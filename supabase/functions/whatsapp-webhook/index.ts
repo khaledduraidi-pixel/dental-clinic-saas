@@ -31,9 +31,10 @@
 // need a real run against a Supabase project before relying on them.
 import { createClient, type SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { REMINDER_TEMPLATE_BUTTONS } from '../_shared/whatsapp-template.ts'
-import { dateKeyInZone, formatDateAr, formatTimeAr, formatWeekdayShortAr } from '../_shared/dates.ts'
+import { dateKeyInZone, dayOfWeekFromYmd, formatDateAr, formatTimeAr, formatWeekdayShortAr } from '../_shared/dates.ts'
 import { sendListMessage, sendTextMessage, type ListSection } from '../_shared/whatsapp-send.ts'
 import { computeAvailableSlots } from '../_shared/availability.ts'
+import { doctorHoursForDay, type DoctorAvailabilityRow } from '../_shared/doctorSchedule.ts'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -223,14 +224,35 @@ async function sendDoctorPicker(supabase: SupabaseClient, clinic: Clinic, phone:
   })
 }
 
+async function getDoctorAvailability(supabase: SupabaseClient, doctorId: string): Promise<DoctorAvailabilityRow[]> {
+  const { data } = await supabase
+    .from('doctor_availability')
+    .select('day_of_week, start_time, end_time')
+    .eq('doctor_id', doctorId)
+  return (data as DoctorAvailabilityRow[] | null) ?? []
+}
+
 async function sendDatePicker(supabase: SupabaseClient, clinic: Clinic, phone: string, doctor: Doctor): Promise<void> {
+  const availability = await getDoctorAvailability(supabase, doctor.id)
   const todayYmd = dateKeyInZone(new Date().toISOString(), clinic.timezone)
   const rows = Array.from({ length: DAYS_AHEAD }, (_, i) => {
     const ymd = addDaysToYmd(todayYmd, i)
+    // Skip days the doctor doesn't work at all (only possible once they
+    // have a customized schedule — a doctor with no rows falls back to the
+    // clinic's hours every day, same as doctorHoursForDay elsewhere).
+    if (doctorHoursForDay(availability, dayOfWeekFromYmd(ymd), clinic.working_hours_start, clinic.working_hours_end) === null) {
+      return null
+    }
     const weekday = formatWeekdayShortAr(noonAnchor(ymd), clinic.timezone)
     const label = i === 0 ? `اليوم — ${weekday}` : i === 1 ? `غداً — ${weekday}` : weekday
     return { id: `date:${ymd}`, title: truncate(label, 24) }
-  })
+  }).filter((row): row is { id: string; title: string } => row !== null)
+
+  if (rows.length === 0) {
+    await reply(supabase, clinic, phone, `عذراً، لا توجد أيام متاحة للحجز مع ${doctor.name} في الأيام القادمة. الرجاء الاتصال بالعيادة مباشرة.`)
+    return
+  }
+
   await replyList(supabase, clinic, phone, {
     header: truncate(`الحجز مع ${doctor.name}`, 60),
     body: 'اختر اليوم المناسب لموعدك',
@@ -240,6 +262,10 @@ async function sendDatePicker(supabase: SupabaseClient, clinic: Clinic, phone: s
 }
 
 async function computeSlotsForDoctorDay(supabase: SupabaseClient, clinic: Clinic, doctorId: string, ymd: string): Promise<string[]> {
+  const availability = await getDoctorAvailability(supabase, doctorId)
+  const hours = doctorHoursForDay(availability, dayOfWeekFromYmd(ymd), clinic.working_hours_start, clinic.working_hours_end)
+  if (hours === null) return []
+
   const { data: existingAppts } = await supabase
     .from('appointments')
     .select('starts_at, duration_minutes')
@@ -248,8 +274,8 @@ async function computeSlotsForDoctorDay(supabase: SupabaseClient, clinic: Clinic
 
   return computeAvailableSlots({
     dateYmd: ymd,
-    workingHoursStart: clinic.working_hours_start,
-    workingHoursEnd: clinic.working_hours_end,
+    workingHoursStart: hours.start,
+    workingHoursEnd: hours.end,
     timeZone: clinic.timezone,
     slotDurationMinutes: SLOT_DURATION_MINUTES,
     existingBookings: (existingAppts ?? []).map((a: { starts_at: string; duration_minutes: number }) => ({

@@ -85,3 +85,10 @@ export function formatWeekdayShortAr(iso: string, timeZone: string): string {
     timeZone,
   }).format(new Date(iso))
 }
+
+// 0=Sunday .. 6=Saturday, matching doctor_availability.day_of_week. Pure
+// calendar arithmetic on a 'YYYY-MM-DD' string — no timezone needed.
+export function dayOfWeekFromYmd(ymd: string): number {
+  const [year, month, day] = ymd.split('-').map(Number)
+  return new Date(Date.UTC(year, month - 1, day)).getUTCDay()
+}

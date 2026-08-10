@@ -8,10 +8,11 @@ import PatientFormModal from '../patients/PatientFormModal'
 import TimeWheelPicker from '../ui/TimeWheelPicker'
 import { supabase } from '../../lib/supabase'
 import { VISIT_TYPES, visitTypeLabel } from '../../lib/visitTypes'
-import { formatDateAr, toZonedInputParts, zonedWallTimeToUtc } from '../../lib/dates'
+import { dayOfWeekFromYmd, formatDateAr, toZonedInputParts, zonedWallTimeToUtc } from '../../lib/dates'
+import { isWithinDoctorHours } from '../../lib/doctorSchedule'
 import type { AppointmentInput, AppointmentWithRelations } from '../../hooks/useAppointments'
 import type { SlotParts } from './TimeGrid'
-import type { AppointmentStatus, Doctor, Patient, VisitType } from '../../types'
+import type { AppointmentStatus, Doctor, DoctorAvailability, Patient, VisitType } from '../../types'
 
 interface LastVisit {
   id: string
@@ -29,6 +30,9 @@ interface AppointmentModalProps {
   clinicTimezone: string
   doctors: Doctor[]
   patients: Patient[]
+  availabilityByDoctor: Record<string, DoctorAvailability[]>
+  clinicWorkingHoursStart: string
+  clinicWorkingHoursEnd: string
   onCreatePatient: (name: string, phone: string, notes: string) => Promise<{ error: string | null; patient?: Patient | null }>
   onSave: (input: AppointmentInput) => Promise<{ error: string | null }>
   onClose: () => void
@@ -44,6 +48,9 @@ export default function AppointmentModal({
   clinicTimezone,
   doctors,
   patients,
+  availabilityByDoctor,
+  clinicWorkingHoursStart,
+  clinicWorkingHoursEnd,
   onCreatePatient,
   onSave,
   onClose,
@@ -164,6 +171,20 @@ export default function AppointmentModal({
     onClose()
   }
 
+  // A soft warning only — never blocks saving. A receptionist may
+  // legitimately need to book outside a doctor's usual hours (an
+  // emergency slot, a one-off exception), so this just flags it rather
+  // than the hard doctor-overlap conflict check above, which does block.
+  const showsOutsideHoursWarning =
+    Boolean(doctorId && dateStr && timeStr) &&
+    !isWithinDoctorHours(
+      availabilityByDoctor[doctorId!] ?? [],
+      dayOfWeekFromYmd(dateStr),
+      timeStr,
+      clinicWorkingHoursStart,
+      clinicWorkingHoursEnd,
+    )
+
   return (
     <>
       <AnimatePresence>
@@ -277,6 +298,12 @@ export default function AppointmentModal({
                     <TimeWheelPicker id="apptTime" value={timeStr} onChange={setTimeStr} />
                   </div>
                 </div>
+
+                {showsOutsideHoursWarning && (
+                  <p className="rounded-lg bg-warning-soft px-2.5 py-1.5 text-xs text-warning">
+                    {ar.doctor_outsideHoursWarning}
+                  </p>
+                )}
 
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="apptVisitType">

@@ -169,6 +169,13 @@ const ar = {
   doctor_activate: 'تفعيل',
   doctor_addTitle: 'إضافة طبيب جديد',
   doctor_editTitle: 'تعديل بيانات الطبيب',
+  doctor_workingHours: 'ساعات عمل الطبيب',
+  doctor_useCustomHours: 'استخدام ساعات مخصصة لهذا الطبيب',
+  doctor_useCustomHoursHelp: 'إن لم تُفعَّل، يعمل الطبيب بنفس ساعات عمل العيادة كل يوم',
+  doctor_dayOff: 'عطلة',
+  doctor_dayWorking: 'يعمل',
+  doctor_days: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+  doctor_outsideHoursWarning: 'تنبيه: هذا الوقت خارج ساعات عمل الطبيب المعتادة',
 
   // WhatsApp / messages log
   whatsapp_connected: 'متصل',

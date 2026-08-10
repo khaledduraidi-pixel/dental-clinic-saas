@@ -6,6 +6,7 @@ import Button from '../ui/Button'
 import Skeleton from '../layout/Skeleton'
 import { useClinic } from '../../hooks/useClinic'
 import { useDoctors } from '../../hooks/useDoctors'
+import { useAllDoctorAvailability } from '../../hooks/useAllDoctorAvailability'
 import { usePatients } from '../../hooks/usePatients'
 import { useAppointments, type AppointmentWithRelations } from '../../hooks/useAppointments'
 import { useReminderAutoProcessor, useReminders } from '../../hooks/useReminders'
@@ -46,6 +47,8 @@ export default function CalendarPage() {
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithRelations | null>(null)
 
   const activeDoctors = useMemo(() => doctors.filter((d) => d.active), [doctors])
+  const activeDoctorIds = useMemo(() => activeDoctors.map((d) => d.id), [activeDoctors])
+  const { availabilityByDoctor } = useAllDoctorAvailability(activeDoctorIds)
   const visibleDoctors = useMemo(
     () => activeDoctors.filter((d) => selectedDoctorIds === null || selectedDoctorIds.has(d.id)),
     [activeDoctors, selectedDoctorIds],
@@ -166,6 +169,9 @@ export default function CalendarPage() {
             date={anchorDate}
             doctors={visibleDoctors}
             appointments={appointments}
+            availabilityByDoctor={availabilityByDoctor}
+            clinicWorkingHoursStart={clinic?.working_hours_start ?? '08:00:00'}
+            clinicWorkingHoursEnd={clinic?.working_hours_end ?? '20:00:00'}
             startHour={startHour}
             endHour={endHour}
             timeZone={timezone}
@@ -194,6 +200,9 @@ export default function CalendarPage() {
         clinicTimezone={timezone}
         doctors={activeDoctors}
         patients={patients}
+        availabilityByDoctor={availabilityByDoctor}
+        clinicWorkingHoursStart={clinic?.working_hours_start ?? '08:00:00'}
+        clinicWorkingHoursEnd={clinic?.working_hours_end ?? '20:00:00'}
         onCreatePatient={createPatient}
         onSave={handleSave}
         onClose={() => setModalOpen(false)}

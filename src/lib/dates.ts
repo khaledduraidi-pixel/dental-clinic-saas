@@ -135,3 +135,12 @@ export function minutesOfDayInZone(iso: string, timeZone: string): number {
 export function dateKeyLocal(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
+
+// 0=Sunday .. 6=Saturday, matching doctor_availability.day_of_week and the
+// calendar's weekStartsOn:0 convention. Pure calendar arithmetic — no
+// timezone needed since the input is already a calendar day (e.g. from
+// dateKeyInZone/dateKeyLocal, or an <input type="date"> value).
+export function dayOfWeekFromYmd(ymd: string): number {
+  const [year, month, day] = ymd.split('-').map(Number)
+  return new Date(Date.UTC(year, month - 1, day)).getUTCDay()
+}
