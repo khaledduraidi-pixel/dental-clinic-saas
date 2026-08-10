@@ -1,7 +1,8 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
-import { parseCsv, buildCsv, type ParsedCsv } from '../../lib/csv'
+import { buildCsv, type ParsedRows } from '../../lib/csv'
+import { parseSpreadsheetFile } from '../../lib/spreadsheet'
 import { normalizePhoneToE164, DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES, type PhoneCountryCode } from '../../lib/phone'
 import { usePatients } from '../../hooks/usePatients'
 
@@ -24,7 +25,7 @@ interface ProcessedRow {
 }
 
 function processRows(
-  parsed: ParsedCsv,
+  parsed: ParsedRows,
   nameCol: number | null,
   phoneCol: number | null,
   notesCol: number | null,
@@ -73,7 +74,7 @@ const STATUS_STYLES: Record<ProcessedRow['status'], string> = {
 
 export default function PatientsImport() {
   const { patients, importPatients } = usePatients()
-  const [parsed, setParsed] = useState<ParsedCsv | null>(null)
+  const [parsed, setParsed] = useState<ParsedRows | null>(null)
   const [nameCol, setNameCol] = useState<number | null>(null)
   const [phoneCol, setPhoneCol] = useState<number | null>(null)
   const [notesCol, setNotesCol] = useState<number | null>(null)
@@ -96,8 +97,14 @@ export default function PatientsImport() {
     setError(null)
     setResult(null)
 
-    const text = await file.text()
-    const csv = parseCsv(text)
+    let csv: ParsedRows
+    try {
+      csv = await parseSpreadsheetFile(file)
+    } catch {
+      setError(ar.import_parseError)
+      setParsed(null)
+      return
+    }
     if (csv.headers.length === 0 || csv.rows.length === 0) {
       setError(ar.import_emptyFile)
       setParsed(null)
@@ -140,7 +147,12 @@ export default function PatientsImport() {
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <label className="cursor-pointer rounded-xl border border-primary/40 bg-surface px-4 py-2 text-sm font-medium text-primary hover:bg-primary-soft">
           {parsed ? ar.import_changeFile : ar.import_chooseFile}
-          <input type="file" accept=".csv,text/csv" onChange={handleFile} className="hidden" />
+          <input
+            type="file"
+            accept=".csv,text/csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            onChange={handleFile}
+            className="hidden"
+          />
         </label>
         <button type="button" onClick={downloadTemplate} className="text-sm font-medium text-primary hover:underline">
           {ar.import_downloadTemplate}

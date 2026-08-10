@@ -1,10 +1,11 @@
-// A small hand-written CSV parser, used instead of a library like SheetJS
-// deliberately — the popular `xlsx` package has known, unpatched high-
-// severity vulnerabilities (prototype pollution, ReDoS), and this feature's
-// whole job is parsing files uploaded by a clinic user, exactly the kind of
+// A small hand-written CSV parser. Used instead of a library deliberately —
+// the popular `xlsx` package has known, unpatched high-severity
+// vulnerabilities (prototype pollution, ReDoS), and this feature's whole job
+// is parsing files uploaded by a clinic user, exactly the kind of
 // less-trusted input those bugs target. CSV is simple enough to parse
-// correctly by hand; Excel/Google Sheets both export to CSV in one click.
-export interface ParsedCsv {
+// correctly by hand. (.xlsx is handled separately, by the actively
+// maintained `read-excel-file` — see spreadsheet.ts.)
+export interface ParsedRows {
   headers: string[]
   rows: string[][]
 }
@@ -12,7 +13,7 @@ export interface ParsedCsv {
 // RFC 4180-style parsing: handles quoted fields, embedded commas/newlines
 // inside quotes, and "" as an escaped quote. Strips a leading UTF-8 BOM,
 // which Excel commonly adds when saving CSV on Windows.
-export function parseCsv(text: string): ParsedCsv {
+export function parseCsv(text: string): ParsedRows {
   const clean = text.charCodeAt(0) === 0xfeff ? text.slice(1) : text
 
   const rows: string[][] = []

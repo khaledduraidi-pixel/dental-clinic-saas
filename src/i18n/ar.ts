@@ -133,11 +133,12 @@ const ar = {
 
   // Patient import
   import_title: 'استيراد المرضى',
-  import_intro: 'لديك بيانات مرضى قديمة مكتوبة بخط اليد أو في ملف إكسل؟ يمكنك استيرادها دفعة واحدة من ملف CSV.',
-  import_excelHint: 'إذا كانت بياناتك في ملف إكسل، احفظه أولاً بصيغة CSV (ملف ← حفظ باسم ← CSV) ثم ارفعه هنا.',
+  import_intro: 'لديك بيانات مرضى قديمة مكتوبة بخط اليد أو في ملف إكسل؟ يمكنك استيرادها دفعة واحدة من ملف Excel أو CSV.',
+  import_excelHint: 'يمكنك رفع ملف إكسل (xlsx) مباشرة، أو ملف CSV.',
   import_downloadTemplate: 'تنزيل نموذج CSV',
-  import_chooseFile: 'اختر ملف CSV',
+  import_chooseFile: 'اختر ملف Excel أو CSV',
   import_changeFile: 'اختيار ملف آخر',
+  import_parseError: 'تعذّر قراءة هذا الملف. تأكد أنه بصيغة xlsx أو CSV صحيحة.',
   import_columnName: 'عمود الاسم',
   import_columnPhone: 'عمود رقم الهاتف',
   import_columnNotes: 'عمود الملاحظات',
