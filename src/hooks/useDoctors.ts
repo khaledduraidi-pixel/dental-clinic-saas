@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import ar from '../i18n/ar'
+import { useClinic } from './useClinic'
 import type { Doctor } from '../types'
 
 // Doctors are never deleted (appointments reference doctor_id with ON DELETE
 // RESTRICT) — the product action is deactivate, which just hides them from
 // new scheduling while keeping their history intact.
 export function useDoctors() {
+  const { clinic } = useClinic()
   const [doctors, setDoctors] = useState<Doctor[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -33,7 +36,8 @@ export function useDoctors() {
   }, [refresh])
 
   async function createDoctor(name: string, color: string) {
-    const { error: insertError } = await supabase.from('doctors').insert({ name, color })
+    if (!clinic) return { error: ar.common_error }
+    const { error: insertError } = await supabase.from('doctors').insert({ clinic_id: clinic.id, name, color })
     if (insertError) return { error: insertError.message }
     await refresh()
     return { error: null }

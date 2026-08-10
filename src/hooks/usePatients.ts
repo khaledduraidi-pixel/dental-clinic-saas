@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import ar from '../i18n/ar'
+import { useClinic } from './useClinic'
 import type { Patient } from '../types'
 
 export interface PatientWithStats extends Patient {
@@ -14,10 +16,17 @@ interface AppointmentStub {
   status: string
 }
 
+export interface ImportPatientInput {
+  name: string
+  phone: string
+  notes: string | null
+}
+
 // Clinic-scale data (tens to low hundreds of patients) makes a full refetch
 // after each mutation simpler and safer than hand-rolled optimistic patching
 // with rollback, so that's the trade-off made here.
 export function usePatients() {
+  const { clinic } = useClinic()
   const [patients, setPatients] = useState<PatientWithStats[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -66,9 +75,10 @@ export function usePatients() {
   }, [refresh])
 
   async function createPatient(name: string, phone: string, notes: string) {
+    if (!clinic) return { error: ar.common_error, patient: null }
     const { data, error: insertError } = await supabase
       .from('patients')
-      .insert({ name, phone, notes: notes || null })
+      .insert({ clinic_id: clinic.id, name, phone, notes: notes || null })
       .select('*')
       .single()
     if (insertError) return { error: insertError.message, patient: null }
@@ -93,5 +103,22 @@ export function usePatients() {
     return { error: null }
   }
 
-  return { patients, loading, error, createPatient, updatePatient, deletePatient, refresh }
+  // Bulk insert for the Settings "استيراد المرضى" flow — a single
+  // round-trip instead of calling createPatient in a loop (which would
+  // also mean one full refetch per row for a file that can be hundreds of
+  // rows long). Caller is responsible for de-duplication against the
+  // already-loaded `patients` list before calling this.
+  async function importPatients(rows: ImportPatientInput[]) {
+    if (!clinic) return { error: ar.common_error, inserted: 0 }
+    if (rows.length === 0) return { error: null, inserted: 0 }
+    const { data, error: insertError } = await supabase
+      .from('patients')
+      .insert(rows.map((r) => ({ clinic_id: clinic.id, name: r.name, phone: r.phone, notes: r.notes })))
+      .select('id')
+    if (insertError) return { error: insertError.message, inserted: 0 }
+    await refresh()
+    return { error: null, inserted: data?.length ?? 0 }
+  }
+
+  return { patients, loading, error, createPatient, updatePatient, deletePatient, importPatients, refresh }
 }

@@ -108,12 +108,14 @@ export function useAppointments(rangeStart: Date, rangeEnd: Date, clinic: Clinic
   }, [refresh])
 
   async function createAppointment(input: AppointmentInput) {
+    if (!clinic) return { error: ar.common_error }
     const conflict = await findDoctorConflict(input.doctorId, input.startsAt, input.durationMinutes)
     if (conflict) return { error: conflictMessage(conflict) }
 
     const { data, error: insertError } = await supabase
       .from('appointments')
       .insert({
+        clinic_id: clinic.id,
         patient_id: input.patientId,
         doctor_id: input.doctorId,
         starts_at: input.startsAt,
