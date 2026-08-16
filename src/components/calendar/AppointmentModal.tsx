@@ -2,6 +2,9 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
+import Input from '../ui/Input'
+import Select from '../ui/Select'
+import Textarea from '../ui/Textarea'
 import { statusLabels } from '../ui/StatusChip'
 import PatientCombobox from './PatientCombobox'
 import PatientFormModal from '../patients/PatientFormModal'
@@ -237,60 +240,45 @@ export default function AppointmentModal({
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="apptDoctor">
-                      {ar.appt_doctor}
-                    </label>
-                    <select
-                      id="apptDoctor"
-                      required
-                      value={doctorId ?? ''}
-                      onChange={(e) => setDoctorId(e.target.value)}
-                      className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    >
-                      <option value="" disabled>
-                        {ar.appt_selectDoctor}
+                  <Select
+                    id="apptDoctor"
+                    label={ar.appt_doctor}
+                    required
+                    value={doctorId ?? ''}
+                    onChange={(e) => setDoctorId(e.target.value)}
+                  >
+                    <option value="" disabled>
+                      {ar.appt_selectDoctor}
+                    </option>
+                    {doctors.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name}
                       </option>
-                      {doctors.map((d) => (
-                        <option key={d.id} value={d.id}>
-                          {d.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="apptDuration">
-                      {ar.appt_duration}
-                    </label>
-                    <select
-                      id="apptDuration"
-                      value={duration}
-                      onChange={(e) => setDuration(Number(e.target.value) as 15 | 30 | 45 | 60)}
-                      className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    >
-                      {DURATIONS.map((d) => (
-                        <option key={d} value={d}>
-                          {d} {ar.appt_durationMinutes}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                    ))}
+                  </Select>
+                  <Select
+                    id="apptDuration"
+                    label={ar.appt_duration}
+                    value={duration}
+                    onChange={(e) => setDuration(Number(e.target.value) as 15 | 30 | 45 | 60)}
+                  >
+                    {DURATIONS.map((d) => (
+                      <option key={d} value={d}>
+                        {d} {ar.appt_durationMinutes}
+                      </option>
+                    ))}
+                  </Select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="apptDate">
-                      {ar.appt_date}
-                    </label>
-                    <input
-                      id="apptDate"
-                      type="date"
-                      required
-                      value={dateStr}
-                      onChange={(e) => setDateStr(e.target.value)}
-                      className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    />
-                  </div>
+                  <Input
+                    id="apptDate"
+                    label={ar.appt_date}
+                    type="date"
+                    required
+                    value={dateStr}
+                    onChange={(e) => setDateStr(e.target.value)}
+                  />
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="apptTime">
                       {ar.appt_time}
@@ -305,38 +293,33 @@ export default function AppointmentModal({
                   </p>
                 )}
 
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="apptVisitType">
-                    {ar.appt_visitType}
-                  </label>
-                  <select
-                    id="apptVisitType"
-                    value={visitType}
-                    onChange={(e) => setVisitType(e.target.value as VisitType)}
-                    className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  >
-                    {VISIT_TYPES.map((t) => (
-                      <option key={t.value} value={t.value}>
-                        {t.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <Select
+                  id="apptVisitType"
+                  label={ar.appt_visitType}
+                  value={visitType}
+                  onChange={(e) => setVisitType(e.target.value as VisitType)}
+                >
+                  {VISIT_TYPES.map((t) => (
+                    <option key={t.value} value={t.value}>
+                      {t.label}
+                    </option>
+                  ))}
+                </Select>
 
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="apptNotes">
-                    {ar.appt_notes} <span className="text-text-muted">({ar.common_optional})</span>
-                  </label>
-                  <textarea
-                    id="apptNotes"
-                    rows={2}
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  />
-                </div>
+                <Textarea
+                  id="apptNotes"
+                  label={ar.appt_notes}
+                  optionalHint={ar.common_optional}
+                  rows={2}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
 
-                {error && <p className="text-sm text-error">{error}</p>}
+                {error && (
+                  <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+                    {error}
+                  </p>
+                )}
 
                 <div className="flex justify-end gap-3 pt-2">
                   <Button type="button" variant="secondary" onClick={onClose}>

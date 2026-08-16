@@ -38,7 +38,11 @@ export default function DoctorsSettings() {
       <div className="mt-4 space-y-2">
         {loading && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-14 w-full" />)}
 
-        {!loading && error && <p className="text-sm text-error">{ar.common_error}</p>}
+        {!loading && error && (
+          <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+            {ar.common_error}
+          </p>
+        )}
 
         {!loading &&
           !error &&

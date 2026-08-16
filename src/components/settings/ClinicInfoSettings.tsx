@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
+import Input from '../ui/Input'
+import Select from '../ui/Select'
 import Skeleton from '../layout/Skeleton'
 import TimeWheelPicker from '../ui/TimeWheelPicker'
 import { useClinic } from '../../hooks/useClinic'
@@ -61,31 +63,23 @@ export default function ClinicInfoSettings() {
       {!loading && clinic && (
         <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="clinicInfoName">
-                {ar.settings_clinicNameLabel}
-              </label>
-              <input
-                id="clinicInfoName"
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="clinicInfoPhone">
-                {ar.settings_clinicPhoneLabel}
-              </label>
-              <input
-                id="clinicInfoPhone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-              />
-            </div>
+            <Input
+              id="clinicInfoName"
+              label={ar.settings_clinicNameLabel}
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <Input
+              id="clinicInfoPhone"
+              label={ar.settings_clinicPhoneLabel}
+              type="tel"
+              className="font-mono"
+              dir="ltr"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
           </div>
 
           <div>
@@ -106,26 +100,26 @@ export default function ClinicInfoSettings() {
             </div>
           </div>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="reminderTiming">
-              {ar.settings_reminderTiming}
-            </label>
-            <p className="mb-1.5 text-xs text-text-muted">{ar.settings_reminderTimingHelp}</p>
-            <select
-              id="reminderTiming"
-              value={reminderHours}
-              onChange={(e) => setReminderHours(Number(e.target.value) as 12 | 24 | 48)}
-              className="block w-full max-w-[10rem] rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-            >
-              {REMINDER_OPTIONS.map((h) => (
-                <option key={h} value={h}>
-                  {h} {ar.settings_reminderTimingHours}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            id="reminderTiming"
+            label={ar.settings_reminderTiming}
+            helperText={ar.settings_reminderTimingHelp}
+            className="max-w-[10rem]"
+            value={reminderHours}
+            onChange={(e) => setReminderHours(Number(e.target.value) as 12 | 24 | 48)}
+          >
+            {REMINDER_OPTIONS.map((h) => (
+              <option key={h} value={h}>
+                {h} {ar.settings_reminderTimingHours}
+              </option>
+            ))}
+          </Select>
 
-          {error && <p className="text-sm text-error">{error}</p>}
+          {error && (
+            <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+              {error}
+            </p>
+          )}
 
           <div className="flex items-center gap-3 pt-2">
             <Button type="submit" loading={saving}>

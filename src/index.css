@@ -1,24 +1,57 @@
 @import 'tailwindcss';
 
+/* Hallmark · genre: modern-minimal · macrostructure: Clinical Canvas (bespoke, app-shape)
+ * theme: custom (teal + terracotta, tuned) · design-system: design.md · designed-as-app
+ * See /design.md for the full locked system. */
 @theme {
   --font-sans: 'IBM Plex Sans Arabic', 'Cairo', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
 
-  --color-primary: #0f766e;
-  --color-primary-dark: #134e4a;
-  --color-primary-soft: #ccfbf1;
-  --color-accent: #f4a261;
-  --color-accent-soft: #fef3e2;
-  --color-bg: #faf9f6;
-  --color-surface: #ffffff;
-  --color-text: #1c1917;
-  --color-text-muted: #57534e;
-  --color-border: #e7e5e4;
-  --color-success: #15803d;
-  --color-success-soft: #dcfce7;
-  --color-warning: #b45309;
-  --color-warning-soft: #fef3c7;
-  --color-error: #b91c1c;
-  --color-error-soft: #fee2e2;
+  /* paper / surface — warm-tinted, never pure white/flat */
+  --color-bg: oklch(98% 0.008 85);
+  --color-surface: oklch(99.5% 0.004 85);
+  --color-surface-raised: oklch(100% 0 0);
+
+  /* ink */
+  --color-text: oklch(20% 0.01 50);
+  --color-text-muted: oklch(46% 0.012 60);
+
+  /* neutrals */
+  --color-border: oklch(90% 0.006 70);
+  --color-border-strong: oklch(80% 0.008 70);
+
+  /* accent 1 — teal (trust / primary action) */
+  --color-primary: oklch(51% 0.11 186);
+  --color-primary-dark: oklch(38% 0.075 188);
+  --color-primary-soft: oklch(94% 0.045 182);
+  --color-primary-ink: oklch(99% 0.004 85);
+
+  /* accent 2 — terracotta (warmth / secondary highlight) */
+  --color-accent: oklch(64% 0.15 48);
+  --color-accent-soft: oklch(95% 0.03 70);
+  --color-accent-ink: oklch(99% 0.004 85);
+
+  /* focus */
+  --color-focus: oklch(58% 0.14 186);
+
+  /* semantic — status colours; exempt from accent restraint, they encode data */
+  --color-success: oklch(48% 0.13 148);
+  --color-success-soft: oklch(95% 0.045 150);
+  --color-warning: oklch(52% 0.14 55);
+  --color-warning-soft: oklch(95% 0.055 90);
+  --color-error: oklch(48% 0.17 27);
+  --color-error-soft: oklch(93% 0.035 22);
+
+  /* Note: no custom --spacing-* named scale here — Tailwind v4 reserves
+   * --spacing-{xs,sm,md,lg,xl,2xl,3xl,...} for its own built-in max-width /
+   * width / height scale (that's what max-w-sm, max-w-lg etc. resolve
+   * against). Redefining them collapsed every max-w-* utility in the app to
+   * a few px. The bare numeric scale (p-4, gap-2, ...) already covers all
+   * spacing needs via Tailwind's default --spacing: 0.25rem multiplier. */
+
+  /* motion — entering/exiting eases; springs stay inline in framer-motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
 }
 
 html,
@@ -36,4 +69,10 @@ body {
 /* Western Arabic numerals everywhere, even inside Arabic text runs */
 body {
   font-variant-numeric: normal;
+}
+
+/* Tabular figures for any dir="ltr" numeral run (times, phone numbers,
+ * counts) set in the mono outlier — never used as a second prose voice. */
+[dir='ltr'] {
+  font-variant-numeric: tabular-nums;
 }

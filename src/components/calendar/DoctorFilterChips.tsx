@@ -57,7 +57,7 @@ function Chip({
       transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
       onClick={onClick}
       className={
-        'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ' +
+        'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium outline outline-2 outline-offset-2 outline-transparent transition-colors focus-visible:outline-focus ' +
         (active
           ? 'border-transparent bg-primary-soft text-primary-dark'
           : 'border-border bg-surface text-text-muted hover:bg-bg')

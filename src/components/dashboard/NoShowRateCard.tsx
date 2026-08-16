@@ -1,4 +1,5 @@
 import ar from '../../i18n/ar'
+import { useCountUp } from '../../hooks/useCountUp'
 
 interface NoShowRateCardProps {
   thisWeek: number
@@ -11,6 +12,7 @@ interface NoShowRateCardProps {
 export default function NoShowRateCard({ thisWeek, lastWeek }: NoShowRateCardProps) {
   const thisRounded = Math.round(thisWeek)
   const lastRounded = Math.round(lastWeek)
+  const displayThisRounded = useCountUp(thisRounded)
 
   const trend = thisRounded < lastRounded ? 'improvement' : thisRounded > lastRounded ? 'worsening' : 'noChange'
   const trendLabel = {
@@ -28,7 +30,9 @@ export default function NoShowRateCard({ thisWeek, lastWeek }: NoShowRateCardPro
   return (
     <div className="mt-6 rounded-2xl border border-border bg-surface p-8">
       <p className="text-sm font-medium text-text-muted">{ar.dashboard_noShowRateTitle}</p>
-      <p className={'mt-2 text-6xl font-bold leading-none ' + numberColor}>{thisRounded}%</p>
+      <p className={'mt-2 font-mono text-6xl font-bold leading-none tabular-nums ' + numberColor}>
+        {displayThisRounded}%
+      </p>
       <p className={'mt-3 text-sm font-medium ' + trendColor}>{trendLabel}</p>
 
       <div className="mt-6 max-w-sm space-y-3">
@@ -44,7 +48,7 @@ function BarRow({ label, value }: { label: string; value: number }) {
     <div>
       <div className="mb-1 flex items-center justify-between text-xs text-text-muted">
         <span>{label}</span>
-        <span>{value}%</span>
+        <span className="font-mono tabular-nums">{value}%</span>
       </div>
       <div className="h-2 w-full rounded-full bg-bg">
         <div className="h-2 rounded-full bg-error" style={{ width: `${Math.min(value, 100)}%` }} />

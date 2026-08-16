@@ -132,14 +132,20 @@ export default function CalendarPage() {
             <button
               type="button"
               onClick={() => setViewMode('day')}
-              className={'px-4 py-2 text-sm font-medium ' + (viewMode === 'day' ? 'bg-primary-soft text-primary-dark' : 'text-text-muted')}
+              className={
+                'px-4 py-2 text-sm font-medium outline outline-2 -outline-offset-2 outline-transparent transition-colors focus-visible:outline-focus ' +
+                (viewMode === 'day' ? 'bg-primary-soft text-primary-dark' : 'text-text-muted hover:bg-bg')
+              }
             >
               {ar.calendar_dayView}
             </button>
             <button
               type="button"
               onClick={() => setViewMode('week')}
-              className={'px-4 py-2 text-sm font-medium ' + (viewMode === 'week' ? 'bg-primary-soft text-primary-dark' : 'text-text-muted')}
+              className={
+                'px-4 py-2 text-sm font-medium outline outline-2 -outline-offset-2 outline-transparent transition-colors focus-visible:outline-focus ' +
+                (viewMode === 'week' ? 'bg-primary-soft text-primary-dark' : 'text-text-muted hover:bg-bg')
+              }
             >
               {ar.calendar_weekView}
             </button>

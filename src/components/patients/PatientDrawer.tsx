@@ -72,7 +72,7 @@ export default function PatientDrawer({ patient, onClose, onEdit, onDelete }: Pa
             <div className="flex items-start justify-between border-b border-border p-6">
               <div>
                 <h2 className="text-lg font-bold text-text">{patient.name}</h2>
-                <p className="mt-1 text-sm text-text-muted" dir="ltr">
+                <p className="mt-1 font-mono text-sm text-text-muted" dir="ltr">
                   {patient.phone}
                 </p>
               </div>

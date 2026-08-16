@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
+import Select from '../ui/Select'
 import StatusChip from '../ui/StatusChip'
 import ConfirmDialog from '../layout/ConfirmDialog'
 import { formatDateTimeAr } from '../../lib/dates'
@@ -81,7 +82,7 @@ export default function AppointmentDetailPanel({
             <div className="flex items-start justify-between border-b border-border p-6">
               <div>
                 <h2 className="text-lg font-bold text-text">{appointment.patients?.name ?? '—'}</h2>
-                <p className="mt-1 text-sm text-text-muted" dir="ltr">
+                <p className="mt-1 font-mono text-sm text-text-muted" dir="ltr">
                   {appointment.patients?.phone}
                 </p>
               </div>
@@ -111,27 +112,22 @@ export default function AppointmentDetailPanel({
                 {appointment.notes && <Row label={ar.appt_notes}>{appointment.notes}</Row>}
               </dl>
 
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="changeStatus">
-                  {ar.appt_changeStatus}
-                </label>
-                <select
-                  id="changeStatus"
-                  value={appointment.status}
-                  onChange={(e) => onChangeStatus(appointment.id, e.target.value as AppointmentStatus)}
-                  disabled={appointment.status === 'cancelled'}
-                  className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
-                >
-                  {CHANGEABLE_STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {STATUS_LABELS[s]}
-                    </option>
-                  ))}
-                  {appointment.status === 'cancelled' && (
-                    <option value="cancelled">{ar.status_cancelled}</option>
-                  )}
-                </select>
-              </div>
+              <Select
+                id="changeStatus"
+                label={ar.appt_changeStatus}
+                value={appointment.status}
+                onChange={(e) => onChangeStatus(appointment.id, e.target.value as AppointmentStatus)}
+                disabled={appointment.status === 'cancelled'}
+              >
+                {CHANGEABLE_STATUSES.map((s) => (
+                  <option key={s} value={s}>
+                    {STATUS_LABELS[s]}
+                  </option>
+                ))}
+                {appointment.status === 'cancelled' && (
+                  <option value="cancelled">{ar.status_cancelled}</option>
+                )}
+              </Select>
 
               {onResendReminder && appointment.status !== 'cancelled' && (
                 <div>

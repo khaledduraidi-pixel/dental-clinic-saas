@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
 import Skeleton from '../layout/Skeleton'
+import { controlClasses } from '../ui/fieldStyles'
 import { usePatients, type PatientWithStats } from '../../hooks/usePatients'
 import { useClinic } from '../../hooks/useClinic'
 import { formatDateAr } from '../../lib/dates'
@@ -56,13 +57,15 @@ export default function PatientsPage() {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder={ar.patients_search}
-        className="mt-4 block w-full max-w-sm rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+        aria-label={ar.patients_search}
+        className={`mt-4 h-11 max-w-sm ${controlClasses(false)}`}
       />
 
       <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
-        <table className="w-full text-start text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[640px] text-start text-sm">
           <thead>
-            <tr className="border-b border-border bg-bg/60 text-xs text-text-muted">
+            <tr className="border-b border-border bg-bg text-xs font-medium tracking-wide text-text-muted">
               <th className="px-4 py-3 text-start font-medium">{ar.patients_name}</th>
               <th className="px-4 py-3 text-start font-medium">{ar.patients_phone}</th>
               <th className="px-4 py-3 text-start font-medium">{ar.patients_lastVisit}</th>
@@ -101,11 +104,19 @@ export default function PatientsPage() {
               filtered.map((patient) => (
                 <tr
                   key={patient.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setSelectedPatient(patient)}
-                  className="cursor-pointer border-b border-border transition-colors last:border-0 hover:bg-bg/60"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setSelectedPatient(patient)
+                    }
+                  }}
+                  className="cursor-pointer border-b border-border outline -outline-offset-2 outline-2 outline-transparent transition-colors last:border-0 hover:bg-bg focus-visible:outline-focus"
                 >
                   <td className="px-4 py-3 font-medium text-text">{patient.name}</td>
-                  <td className="px-4 py-3 text-text-muted" dir="ltr">
+                  <td className="px-4 py-3 font-mono text-text-muted" dir="ltr">
                     {patient.phone}
                   </td>
                   <td className="px-4 py-3 text-text-muted">
@@ -116,11 +127,12 @@ export default function PatientsPage() {
                       ? formatDateAr(patient.nextAppointment, clinic?.timezone)
                       : ar.patients_never}
                   </td>
-                  <td className="px-4 py-3 text-text-muted">{patient.totalVisits}</td>
+                  <td className="px-4 py-3 font-mono text-text-muted">{patient.totalVisits}</td>
                 </tr>
               ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       <PatientFormModal

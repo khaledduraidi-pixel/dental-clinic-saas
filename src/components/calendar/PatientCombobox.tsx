@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import ar from '../../i18n/ar'
+import { controlClasses } from '../ui/fieldStyles'
 import type { Patient } from '../../types'
 
 interface PatientComboboxProps {
@@ -50,6 +51,9 @@ export default function PatientCombobox({
     <div ref={containerRef} className="relative">
       <input
         type="text"
+        role="combobox"
+        aria-expanded={open}
+        aria-autocomplete="list"
         value={query}
         placeholder={ar.appt_searchPatient}
         onChange={(e) => {
@@ -57,7 +61,7 @@ export default function PatientCombobox({
           setOpen(true)
         }}
         onFocus={() => setOpen(true)}
-        className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+        className={`h-11 ${controlClasses(false)}`}
       />
 
       {open && (
@@ -71,10 +75,10 @@ export default function PatientCombobox({
                 setQuery(p.name)
                 setOpen(false)
               }}
-              className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-bg"
+              className="flex w-full items-center justify-between px-3 py-2 text-start text-sm outline -outline-offset-2 outline-2 outline-transparent hover:bg-bg focus-visible:outline-focus"
             >
               <span className="font-medium text-text">{p.name}</span>
-              <span className="text-xs text-text-muted" dir="ltr">
+              <span className="font-mono text-xs text-text-muted" dir="ltr">
                 {p.phone}
               </span>
             </button>
@@ -90,7 +94,7 @@ export default function PatientCombobox({
               onAddNew(query.trim())
               setOpen(false)
             }}
-            className="flex w-full items-center gap-1.5 border-t border-border px-3 py-2 text-start text-sm font-medium text-primary hover:bg-primary-soft"
+            className="flex w-full items-center gap-1.5 border-t border-border px-3 py-2 text-start text-sm font-medium text-primary-dark outline -outline-offset-2 outline-2 outline-transparent hover:bg-primary-soft focus-visible:outline-focus"
           >
             + {ar.appt_addNewPatient}
           </button>

@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
+import Input from '../ui/Input'
+import Select from '../ui/Select'
 import Skeleton from '../layout/Skeleton'
 import { useClinic } from '../../hooks/useClinic'
 import { isWhatsAppMockMode, renderReminderMessage } from '../../lib/whatsapp'
@@ -81,45 +83,41 @@ export default function WhatsAppSettings() {
 
       {!loading && clinic && (
         <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="whatsappMode">
-              {ar.whatsapp_mode}
-            </label>
-            <select
-              id="whatsappMode"
-              value={mode}
-              onChange={(e) => setMode(e.target.value as WhatsAppMode)}
-              disabled={!deploymentSupportsLive}
-              className="block w-full max-w-xs rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:bg-bg disabled:text-text-muted"
-            >
-              <option value="mock">{ar.whatsapp_modeMockOption}</option>
-              <option value="live">{ar.whatsapp_modeLiveOption}</option>
-            </select>
-            {!deploymentSupportsLive && <p className="mt-1.5 text-xs text-text-muted">{ar.whatsapp_liveUnavailable}</p>}
-          </div>
+          <Select
+            id="whatsappMode"
+            label={ar.whatsapp_mode}
+            className="max-w-xs"
+            value={mode}
+            onChange={(e) => setMode(e.target.value as WhatsAppMode)}
+            disabled={!deploymentSupportsLive}
+            helperText={!deploymentSupportsLive ? ar.whatsapp_liveUnavailable : undefined}
+          >
+            <option value="mock">{ar.whatsapp_modeMockOption}</option>
+            <option value="live">{ar.whatsapp_modeLiveOption}</option>
+          </Select>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="whatsappPhoneNumberId">
-              {ar.whatsapp_phoneNumberId}
-            </label>
-            <input
-              id="whatsappPhoneNumberId"
-              type="text"
-              dir="ltr"
-              value={phoneNumberId}
-              onChange={(e) => setPhoneNumberId(e.target.value)}
-              disabled={mode !== 'live'}
-              className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:bg-bg disabled:text-text-muted"
-            />
-            <p className="mt-1.5 text-xs text-text-muted">{ar.whatsapp_phoneNumberIdHelp}</p>
-          </div>
+          <Input
+            id="whatsappPhoneNumberId"
+            label={ar.whatsapp_phoneNumberId}
+            type="text"
+            dir="ltr"
+            className="font-mono"
+            value={phoneNumberId}
+            onChange={(e) => setPhoneNumberId(e.target.value)}
+            disabled={mode !== 'live'}
+            helperText={ar.whatsapp_phoneNumberIdHelp}
+          />
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-text">{ar.whatsapp_templatePreview}</label>
             <p className="rounded-xl bg-bg px-3 py-2.5 text-sm text-text">{previewBody}</p>
           </div>
 
-          {error && <p className="text-sm text-error">{error}</p>}
+          {error && (
+            <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+              {error}
+            </p>
+          )}
 
           <div className="flex items-center gap-3 pt-2">
             <Button type="submit" loading={saving}>

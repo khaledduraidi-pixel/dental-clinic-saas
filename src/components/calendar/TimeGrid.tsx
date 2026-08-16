@@ -120,9 +120,9 @@ export default function TimeGrid({
                   style={{
                     top: range.startMinutes * pxPerMinute,
                     height: (range.endMinutes - range.startMinutes) * pxPerMinute,
-                    backgroundColor: 'rgba(231, 229, 228, 0.45)', // --color-border, tinted
+                    backgroundColor: 'color-mix(in oklch, var(--color-border-strong) 55%, transparent)',
                     backgroundImage:
-                      'repeating-linear-gradient(-45deg, rgba(120, 113, 108, 0.08) 0, rgba(120, 113, 108, 0.08) 1px, transparent 1px, transparent 8px)',
+                      'repeating-linear-gradient(-45deg, color-mix(in oklch, var(--color-text-muted) 12%, transparent) 0, color-mix(in oklch, var(--color-text-muted) 12%, transparent) 1px, transparent 1px, transparent 8px)',
                   }}
                 />
               ))}
@@ -141,7 +141,7 @@ export default function TimeGrid({
                     key={i}
                     type="button"
                     onClick={() => onSlotClick(col.key, slot)}
-                    className="absolute inset-x-0 border-b border-border/60 transition-colors hover:bg-primary-soft/40"
+                    className="absolute inset-x-0 border-b border-border/60 outline outline-2 -outline-offset-2 outline-transparent transition-colors hover:bg-primary-soft/40 focus-visible:outline-focus"
                     style={{ top: i * SLOT_HEIGHT_PX, height: SLOT_HEIGHT_PX }}
                   />
                 )
@@ -167,14 +167,14 @@ export default function TimeGrid({
                     key={appt.id}
                     type="button"
                     onClick={() => onAppointmentClick(appt)}
-                    className="absolute z-10 overflow-hidden rounded-lg px-2 py-1 text-start shadow-sm transition-transform hover:z-20 hover:scale-[1.02]"
+                    className="absolute z-10 overflow-hidden rounded-lg px-2 py-1 text-start shadow-sm outline outline-2 outline-offset-1 outline-transparent transition-transform hover:z-20 hover:scale-[1.02] focus-visible:outline-focus"
                     style={{
                       top,
                       height,
                       insetInlineStart: `${column * widthPct}%`,
                       width: `calc(${widthPct}% - 4px)`,
-                      backgroundColor: (appt.doctors?.color ?? '#0F766E') + '1f',
-                      borderInlineStart: `3px solid ${appt.doctors?.color ?? '#0F766E'}`,
+                      backgroundColor: (appt.doctors?.color ?? '#00796F') + '1f',
+                      borderInlineStart: `3px solid ${appt.doctors?.color ?? '#00796F'}`,
                     }}
                   >
                     <div className="flex items-center justify-between gap-1">

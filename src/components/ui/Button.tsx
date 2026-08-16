@@ -19,10 +19,10 @@ interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, Conf
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-primary text-white hover:bg-primary-dark',
-  secondary: 'bg-surface text-primary border border-primary/40 hover:bg-primary-soft',
+  primary: 'bg-primary text-primary-ink hover:bg-primary-dark',
+  secondary: 'bg-surface text-primary-dark border border-primary/40 hover:bg-primary-soft',
   ghost: 'bg-transparent text-text-muted hover:bg-bg hover:text-text',
-  danger: 'bg-error text-white hover:opacity-90',
+  danger: 'bg-error text-primary-ink hover:opacity-90',
 }
 
 // Press feedback fires on pointer-down (whileTap), settles with a critically
@@ -43,7 +43,8 @@ export default function Button({
       transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
       disabled={disabled || loading}
       className={[
-        'flex h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-medium',
+        'flex h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-medium transition-colors',
+        'outline outline-2 outline-offset-2 outline-transparent focus-visible:outline-focus',
         'disabled:pointer-events-none disabled:opacity-50',
         variantClasses[variant],
         className,

@@ -6,6 +6,7 @@ import {
   normalizePhoneToE164,
   type PhoneCountryCode,
 } from '../../lib/phone'
+import { controlClasses } from './fieldStyles'
 
 interface PhoneInputProps {
   id?: string
@@ -46,7 +47,7 @@ export default function PhoneInput({ id, value, onChange, required }: PhoneInput
         value={country}
         onChange={(e) => handleCountryChange(e.target.value as PhoneCountryCode)}
         dir="rtl"
-        className="rounded-xl border border-border px-2 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+        className={`h-11 w-auto shrink-0 ${controlClasses(false)}`}
       >
         {PHONE_COUNTRIES.map((c) => (
           <option key={c.code} value={c.code}>
@@ -62,7 +63,7 @@ export default function PhoneInput({ id, value, onChange, required }: PhoneInput
         value={local}
         onChange={(e) => handleLocalChange(e.target.value)}
         placeholder="0599123456"
-        className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+        className={`h-11 font-mono ${controlClasses(false)}`}
       />
     </div>
   )

@@ -1,6 +1,7 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
+import Select from '../ui/Select'
 import { buildCsv, type ParsedRows } from '../../lib/csv'
 import { parseSpreadsheetFile } from '../../lib/spreadsheet'
 import { normalizePhoneToE164, DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES, type PhoneCountryCode } from '../../lib/phone'
@@ -145,21 +146,29 @@ export default function PatientsImport() {
       <p className="mt-1 text-xs text-text-muted">{ar.import_excelHint}</p>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <label className="cursor-pointer rounded-xl border border-primary/40 bg-surface px-4 py-2 text-sm font-medium text-primary hover:bg-primary-soft">
+        <label className="h-11 cursor-pointer rounded-xl border border-primary/40 bg-surface px-4 text-sm font-medium leading-[2.75rem] text-primary-dark outline outline-2 outline-offset-2 outline-transparent transition-colors hover:bg-primary-soft has-[:focus-visible]:outline-focus">
           {parsed ? ar.import_changeFile : ar.import_chooseFile}
           <input
             type="file"
             accept=".csv,text/csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             onChange={handleFile}
-            className="hidden"
+            className="sr-only"
           />
         </label>
-        <button type="button" onClick={downloadTemplate} className="text-sm font-medium text-primary hover:underline">
+        <button
+          type="button"
+          onClick={downloadTemplate}
+          className="rounded-md text-sm font-medium text-primary-dark outline outline-2 outline-offset-2 outline-transparent hover:underline focus-visible:outline-focus"
+        >
           {ar.import_downloadTemplate}
         </button>
       </div>
 
-      {error && <p className="mt-3 text-sm text-error">{error}</p>}
+      {error && (
+        <p role="alert" className="mt-3 rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+          {error}
+        </p>
+      )}
 
       {result && (
         <div className="mt-4 rounded-xl bg-success-soft p-4 text-sm text-success">
@@ -175,67 +184,56 @@ export default function PatientsImport() {
       {parsed && (
         <div className="mt-4 space-y-4">
           <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <label className="mb-1.5 block text-xs font-medium text-text-muted">{ar.import_columnName}</label>
-              <select
-                value={nameCol ?? ''}
-                onChange={(e) => setNameCol(e.target.value === '' ? null : Number(e.target.value))}
-                className="block w-full rounded-xl border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-              >
-                <option value="">{ar.import_columnNone}</option>
-                {parsed.headers.map((h, i) => (
-                  <option key={i} value={i}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs font-medium text-text-muted">{ar.import_columnPhone}</label>
-              <select
-                value={phoneCol ?? ''}
-                onChange={(e) => setPhoneCol(e.target.value === '' ? null : Number(e.target.value))}
-                className="block w-full rounded-xl border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-              >
-                <option value="">{ar.import_columnNone}</option>
-                {parsed.headers.map((h, i) => (
-                  <option key={i} value={i}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs font-medium text-text-muted">{ar.import_columnNotes}</label>
-              <select
-                value={notesCol ?? ''}
-                onChange={(e) => setNotesCol(e.target.value === '' ? null : Number(e.target.value))}
-                className="block w-full rounded-xl border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-              >
-                <option value="">{ar.import_columnNone}</option>
-                {parsed.headers.map((h, i) => (
-                  <option key={i} value={i}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-text-muted">{ar.import_phoneCountry}</label>
-            <select
-              value={country}
-              onChange={(e) => setCountry(e.target.value as PhoneCountryCode)}
-              className="block w-full max-w-xs rounded-xl border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+            <Select
+              label={ar.import_columnName}
+              value={nameCol ?? ''}
+              onChange={(e) => setNameCol(e.target.value === '' ? null : Number(e.target.value))}
             >
-              {PHONE_COUNTRIES.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.label} +{c.dialCode}
+              <option value="">{ar.import_columnNone}</option>
+              {parsed.headers.map((h, i) => (
+                <option key={i} value={i}>
+                  {h}
                 </option>
               ))}
-            </select>
+            </Select>
+            <Select
+              label={ar.import_columnPhone}
+              value={phoneCol ?? ''}
+              onChange={(e) => setPhoneCol(e.target.value === '' ? null : Number(e.target.value))}
+            >
+              <option value="">{ar.import_columnNone}</option>
+              {parsed.headers.map((h, i) => (
+                <option key={i} value={i}>
+                  {h}
+                </option>
+              ))}
+            </Select>
+            <Select
+              label={ar.import_columnNotes}
+              value={notesCol ?? ''}
+              onChange={(e) => setNotesCol(e.target.value === '' ? null : Number(e.target.value))}
+            >
+              <option value="">{ar.import_columnNone}</option>
+              {parsed.headers.map((h, i) => (
+                <option key={i} value={i}>
+                  {h}
+                </option>
+              ))}
+            </Select>
           </div>
+
+          <Select
+            label={ar.import_phoneCountry}
+            className="max-w-xs"
+            value={country}
+            onChange={(e) => setCountry(e.target.value as PhoneCountryCode)}
+          >
+            {PHONE_COUNTRIES.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.label} +{c.dialCode}
+              </option>
+            ))}
+          </Select>
 
           <div>
             <p className="mb-2 text-xs font-medium text-text-muted">{ar.import_preview}</p>
@@ -252,7 +250,7 @@ export default function PatientsImport() {
                   {processed.slice(0, 10).map((row, i) => (
                     <tr key={i} className="border-b border-border last:border-0">
                       <td className="px-3 py-2">{row.name || '—'}</td>
-                      <td className="px-3 py-2" dir="ltr">
+                      <td className="px-3 py-2 font-mono" dir="ltr">
                         {row.phoneNormalized ?? (row.phoneRaw || '—')}
                       </td>
                       <td className="px-3 py-2">

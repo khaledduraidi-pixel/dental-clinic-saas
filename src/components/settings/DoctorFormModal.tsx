@@ -2,20 +2,24 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
+import Input from '../ui/Input'
 import TimeWheelPicker from '../ui/TimeWheelPicker'
 import { useClinic } from '../../hooks/useClinic'
 import { useDoctorAvailability, type AvailabilityDayInput } from '../../hooks/useDoctorAvailability'
 import type { Doctor } from '../../types'
 
+// A curated categorical palette (same L/C discipline as the brand tokens,
+// hues spread evenly around the wheel) — for telling doctors apart on the
+// calendar, not a brand decoration, so it lives outside the theme tokens.
 const COLOR_PALETTE = [
-  '#0F766E', // teal
-  '#B45309', // amber
-  '#7C3AED', // violet
-  '#BE123C', // rose
-  '#1D4ED8', // blue
-  '#047857', // emerald
-  '#C2410C', // orange
-  '#475569', // slate
+  '#007C72', // teal
+  '#9B532A', // terracotta
+  '#4268A8', // indigo
+  '#924D7D', // rose
+  '#AA7E00', // gold
+  '#007694', // sky
+  '#786900', // olive
+  '#73599E', // plum
 ]
 
 const DAYS = [0, 1, 2, 3, 4, 5, 6] as const
@@ -133,19 +137,14 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
             </h2>
 
             <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="doctorName">
-                  {ar.doctor_name}
-                </label>
-                <input
-                  id="doctorName"
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
-              </div>
+              <Input
+                id="doctorName"
+                label={ar.doctor_name}
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
 
               <div>
                 <span className="mb-1.5 block text-sm font-medium text-text">{ar.doctor_color}</span>
@@ -156,8 +155,9 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
                       type="button"
                       onClick={() => setColor(c)}
                       aria-label={c}
+                      aria-pressed={color === c}
                       className={
-                        'h-8 w-8 rounded-full ring-offset-2 transition-shadow ' +
+                        'h-8 w-8 rounded-full outline outline-2 outline-offset-2 outline-transparent ring-offset-2 transition-shadow focus-visible:outline-focus ' +
                         (color === c ? 'ring-2 ring-text' : '')
                       }
                       style={{ backgroundColor: c }}
@@ -177,7 +177,7 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
                       type="checkbox"
                       checked={useCustomHours}
                       onChange={(e) => setUseCustomHours(e.target.checked)}
-                      className="h-5 w-5 accent-primary"
+                      className="h-5 w-5 accent-primary outline-2 outline-offset-2 outline-focus focus-visible:outline"
                     />
                   </label>
 
@@ -190,7 +190,7 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
                               type="checkbox"
                               checked={schedule[d]?.enabled ?? false}
                               onChange={(e) => updateDay(d, { enabled: e.target.checked })}
-                              className="h-4 w-4 accent-primary"
+                              className="h-4 w-4 accent-primary outline-2 outline-offset-2 outline-focus focus-visible:outline"
                             />
                             {ar.doctor_days[d]}
                           </label>
@@ -213,7 +213,11 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
                 </div>
               )}
 
-              {error && <p className="text-sm text-error">{error}</p>}
+              {error && (
+                <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+                  {error}
+                </p>
+              )}
 
               <div className="flex justify-end gap-3 pt-2">
                 <Button type="button" variant="secondary" onClick={onClose}>

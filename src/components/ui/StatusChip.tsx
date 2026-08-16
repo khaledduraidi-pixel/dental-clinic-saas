@@ -5,12 +5,12 @@ import type { AppointmentStatus } from '../../types'
 // reschedule_requested=amber, no_show=red, completed=blue. cancelled isn't
 // in the spec's list; treated as a muted, struck-through gray.
 const statusStyles: Record<AppointmentStatus, string> = {
-  scheduled: 'bg-gray-100 text-gray-700',
-  confirmed: 'bg-green-100 text-green-700',
-  reschedule_requested: 'bg-amber-100 text-amber-700',
-  no_show: 'bg-red-100 text-red-700',
-  completed: 'bg-blue-100 text-blue-700',
-  cancelled: 'bg-gray-100 text-gray-400 line-through',
+  scheduled: 'bg-bg text-text-muted',
+  confirmed: 'bg-success-soft text-success',
+  reschedule_requested: 'bg-warning-soft text-warning',
+  no_show: 'bg-error-soft text-error',
+  completed: 'bg-primary-soft text-primary-dark',
+  cancelled: 'bg-bg text-text-muted/70 line-through',
 }
 
 export const statusLabels: Record<AppointmentStatus, string> = {

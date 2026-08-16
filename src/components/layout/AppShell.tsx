@@ -31,7 +31,7 @@ function NavItem({ to, label, end }: { to: string; label: string; end: boolean }
     <NavLink
       to={to}
       end={end}
-      className="relative rounded-xl px-4 py-2 text-sm font-medium transition-colors"
+      className="relative rounded-xl px-4 py-2 text-sm font-medium outline outline-2 outline-offset-2 outline-transparent transition-colors focus-visible:outline-focus"
     >
       {({ isActive }) => (
         <>
@@ -55,10 +55,13 @@ export default function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col bg-bg">
-      <header className="sticky top-0 z-20 border-b border-white/40 bg-surface/70 backdrop-blur-xl backdrop-saturate-150">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <header className="sticky top-0 z-20 border-b border-border/60 bg-surface/70 backdrop-blur-xl backdrop-saturate-150">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
-            <span className="text-lg font-bold text-primary">{ar.appName}</span>
+            <span className="flex items-center gap-2 text-lg font-bold tracking-tight text-primary-dark">
+              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-sm bg-accent" />
+              {ar.appName}
+            </span>
             <nav className="hidden items-center gap-1 sm:flex">
               {navItems.map((item) => (
                 <NavItem key={item.to} {...item} />
@@ -75,7 +78,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
       </header>
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">{children}</main>
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">{children}</main>
 
       <ConfirmDialog
         open={logoutConfirmOpen}

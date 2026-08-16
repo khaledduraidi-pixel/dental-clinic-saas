@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2026-08-16",
+    "scope": "app",
+    "macrostructure": "Clinical Canvas (bespoke, app-shape)",
+    "theme": "custom",
+    "theme_axes": "light paper / grotesque-sans display / cool-warm dual accent (teal + terracotta)",
+    "vibe": "professional clinic dashboard, calm and precise",
+    "enrichment": "none",
+    "brief": "عيادتي (Eyadati) — full multi-page redesign: auth, calendar, patients, dashboard, settings"
+  }
+]

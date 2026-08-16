@@ -2,6 +2,8 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
+import Input from '../ui/Input'
+import Textarea from '../ui/Textarea'
 import PhoneInput from '../ui/PhoneInput'
 import type { Patient } from '../../types'
 
@@ -79,19 +81,14 @@ export default function PatientFormModal({
             </h2>
 
             <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="patientName">
-                  {ar.patients_name}
-                </label>
-                <input
-                  id="patientName"
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
-              </div>
+              <Input
+                id="patientName"
+                label={ar.patients_name}
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="patientPhone">
                   {ar.patients_phone}
@@ -105,20 +102,20 @@ export default function PatientFormModal({
                   }}
                 />
               </div>
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="patientNotes">
-                  {ar.appt_notes} <span className="text-text-muted">({ar.common_optional})</span>
-                </label>
-                <textarea
-                  id="patientNotes"
-                  rows={2}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="block w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
-              </div>
+              <Textarea
+                id="patientNotes"
+                label={ar.appt_notes}
+                optionalHint={ar.common_optional}
+                rows={2}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
 
-              {error && <p className="text-sm text-error">{error}</p>}
+              {error && (
+                <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+                  {error}
+                </p>
+              )}
 
               <div className="flex justify-end gap-3 pt-2">
                 <Button type="button" variant="secondary" onClick={onClose}>

@@ -27,7 +27,11 @@ export default function MessagesLog() {
       <div className="mt-4 space-y-2">
         {loading && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
 
-        {!loading && error && <p className="text-sm text-error">{ar.common_error}</p>}
+        {!loading && error && (
+          <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+            {ar.common_error}
+          </p>
+        )}
 
         {!loading && !error && messages.length === 0 && (
           <p className="py-6 text-center text-sm text-text-muted">{ar.whatsapp_messagesLogEmpty}</p>
@@ -38,7 +42,7 @@ export default function MessagesLog() {
           messages.map((m) => (
             <div key={m.id} className="rounded-xl border border-border p-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium text-text" dir="ltr">
+                <span className="font-mono text-sm font-medium text-text" dir="ltr">
                   {m.patient_phone}
                 </span>
                 <div className="flex items-center gap-2">
