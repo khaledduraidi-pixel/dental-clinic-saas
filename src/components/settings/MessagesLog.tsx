@@ -22,7 +22,7 @@ export default function MessagesLog() {
 
   return (
     <section className="rounded-2xl border border-border bg-surface p-6">
-      <h2 className="text-sm font-bold text-text">{ar.whatsapp_messagesLog}</h2>
+      <h2 className="text-base font-bold text-text">{ar.whatsapp_messagesLog}</h2>
 
       <div className="mt-4 space-y-2">
         {loading && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}

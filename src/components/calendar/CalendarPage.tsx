@@ -110,7 +110,7 @@ export default function CalendarPage() {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-xl font-bold text-text">{ar.calendar_title}</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-text">{ar.calendar_title}</h1>
         <Button onClick={() => openNewAppointment(null, null)}>{ar.calendar_newAppointment}</Button>
       </div>
 

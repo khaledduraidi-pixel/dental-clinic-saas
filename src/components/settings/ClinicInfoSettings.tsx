@@ -50,8 +50,11 @@ export default function ClinicInfoSettings() {
   }
 
   return (
-    <section className="rounded-2xl border border-border bg-surface p-6">
-      <h2 className="text-sm font-bold text-text">{ar.settings_clinicInfo}</h2>
+    <section className="rounded-2xl border border-primary/25 bg-surface p-6 sm:p-8">
+      <h2 className="flex items-center gap-2 text-base font-bold text-text">
+        <span aria-hidden="true" className="h-2 w-2 rounded-sm bg-accent" />
+        {ar.settings_clinicInfo}
+      </h2>
 
       {loading && (
         <div className="mt-4 space-y-3">

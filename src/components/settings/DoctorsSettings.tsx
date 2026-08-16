@@ -29,7 +29,7 @@ export default function DoctorsSettings() {
   return (
     <section className="rounded-2xl border border-border bg-surface p-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-text">{ar.settings_doctors}</h2>
+        <h2 className="text-base font-bold text-text">{ar.settings_doctors}</h2>
         <Button variant="secondary" className="h-9 px-3 text-xs" onClick={openAddForm}>
           {ar.settings_addDoctor}
         </Button>

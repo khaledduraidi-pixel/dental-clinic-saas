@@ -61,7 +61,7 @@ export default function WhatsAppSettings() {
   return (
     <section className="rounded-2xl border border-border bg-surface p-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-text">{ar.settings_whatsapp}</h2>
+        <h2 className="text-base font-bold text-text">{ar.settings_whatsapp}</h2>
         {!loading && clinic && (
           <span
             className={

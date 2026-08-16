@@ -84,6 +84,7 @@ const ar = {
 
   // Patients
   patients_title: 'المرضى',
+  patients_countSuffix: 'مريض مسجّل',
   patients_search: 'بحث بالاسم أو رقم الهاتف',
   patients_name: 'الاسم',
   patients_phone: 'رقم الهاتف',

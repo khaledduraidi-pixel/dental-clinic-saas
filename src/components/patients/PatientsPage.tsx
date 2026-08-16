@@ -47,8 +47,15 @@ export default function PatientsPage() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-xl font-bold text-text">{ar.patients_title}</h1>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-text">{ar.patients_title}</h1>
+          {!loading && !error && (
+            <p className="mt-1 font-mono text-sm tabular-nums text-text-muted">
+              {patients.length} {ar.patients_countSuffix}
+            </p>
+          )}
+        </div>
         <Button onClick={openNewPatientForm}>{ar.patients_newPatient}</Button>
       </div>
 

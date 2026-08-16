@@ -30,77 +30,86 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-bg px-4 py-12">
-      <motion.div
-        className="w-full max-w-sm"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', bounce: 0, duration: 0.45 }}
-      >
-        <div className="mb-8 flex flex-col items-center gap-2">
-          <span aria-hidden="true" className="h-3 w-3 rounded-sm bg-accent" />
-          <h1 className="text-xl font-bold tracking-tight text-primary-dark">{ar.appName}</h1>
-          <h2 className="text-sm text-text-muted">{ar.auth_signupTitle}</h2>
-        </div>
+    <div className="flex min-h-screen">
+      <div className="hidden bg-primary-dark p-12 text-primary-ink sm:flex sm:w-2/5 sm:flex-col sm:justify-between lg:w-[45%]">
+        <span className="flex items-center gap-2 text-lg font-bold tracking-tight">
+          <span aria-hidden="true" className="h-2.5 w-2.5 rounded-sm bg-accent" />
+          {ar.appName}
+        </span>
+        <p className="max-w-sm text-3xl font-bold leading-snug tracking-tight">{ar.appTagline}</p>
+        <span />
+      </div>
 
-        <form
-          className="space-y-4 rounded-2xl border border-border bg-surface p-8 shadow-sm"
-          onSubmit={handleSubmit}
+      <div className="flex flex-1 flex-col justify-center bg-bg px-6 py-12 sm:px-16">
+        <motion.div
+          className="mx-auto w-full max-w-sm"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', bounce: 0, duration: 0.45 }}
         >
-          <Input
-            id="clinicName"
-            label={ar.auth_clinicName}
-            type="text"
-            required
-            value={clinicName}
-            onChange={(e) => setClinicName(e.target.value)}
-          />
-          <Input
-            id="clinicPhone"
-            label={ar.auth_clinicPhone}
-            type="tel"
-            required
-            value={clinicPhone}
-            onChange={(e) => setClinicPhone(e.target.value)}
-          />
-          <Input
-            id="email"
-            label={ar.auth_email}
-            type="email"
-            required
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Input
-            id="password"
-            label={ar.auth_password}
-            type="password"
-            required
-            minLength={6}
-            autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <span className="mb-8 flex items-center gap-2 text-lg font-bold tracking-tight text-primary-dark sm:hidden">
+            <span aria-hidden="true" className="h-2.5 w-2.5 rounded-sm bg-accent" />
+            {ar.appName}
+          </span>
 
-          {error && (
-            <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
-              {error}
-            </p>
-          )}
+          <h1 className="text-2xl font-bold tracking-tight text-text">{ar.auth_signupTitle}</h1>
 
-          <Button type="submit" className="mt-2 w-full" loading={loading}>
-            {ar.auth_signupButton}
-          </Button>
-        </form>
+          <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
+            <Input
+              id="clinicName"
+              label={ar.auth_clinicName}
+              type="text"
+              required
+              value={clinicName}
+              onChange={(e) => setClinicName(e.target.value)}
+            />
+            <Input
+              id="clinicPhone"
+              label={ar.auth_clinicPhone}
+              type="tel"
+              required
+              value={clinicPhone}
+              onChange={(e) => setClinicPhone(e.target.value)}
+            />
+            <Input
+              id="email"
+              label={ar.auth_email}
+              type="email"
+              required
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              id="password"
+              label={ar.auth_password}
+              type="password"
+              required
+              minLength={6}
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-        <p className="mt-6 text-center text-sm text-text-muted">
-          {ar.auth_haveAccount}{' '}
-          <Link to="/login" className="font-medium text-primary-dark hover:underline">
-            {ar.auth_goLogin}
-          </Link>
-        </p>
-      </motion.div>
+            {error && (
+              <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+                {error}
+              </p>
+            )}
+
+            <Button type="submit" className="mt-2 w-full" loading={loading}>
+              {ar.auth_signupButton}
+            </Button>
+          </form>
+
+          <p className="mt-6 text-sm text-text-muted">
+            {ar.auth_haveAccount}{' '}
+            <Link to="/login" className="font-medium text-primary-dark hover:underline">
+              {ar.auth_goLogin}
+            </Link>
+          </p>
+        </motion.div>
+      </div>
     </div>
   )
 }

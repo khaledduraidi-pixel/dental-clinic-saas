@@ -28,14 +28,16 @@ export default function NoShowRateCard({ thisWeek, lastWeek }: NoShowRateCardPro
   const numberColor = thisRounded >= 20 ? 'text-error' : thisRounded >= 10 ? 'text-warning' : 'text-success'
 
   return (
-    <div className="mt-6 rounded-2xl border border-border bg-surface p-8">
-      <p className="text-sm font-medium text-text-muted">{ar.dashboard_noShowRateTitle}</p>
-      <p className={'mt-2 font-mono text-6xl font-bold leading-none tabular-nums ' + numberColor}>
-        {displayThisRounded}%
-      </p>
-      <p className={'mt-3 text-sm font-medium ' + trendColor}>{trendLabel}</p>
+    <div className="mt-6 grid gap-8 rounded-2xl border border-border bg-surface p-8 sm:grid-cols-[1.2fr_1fr] sm:items-center">
+      <div>
+        <p className="text-sm font-medium text-text-muted">{ar.dashboard_noShowRateTitle}</p>
+        <p className={'mt-2 font-mono text-7xl font-bold leading-none tabular-nums ' + numberColor}>
+          {displayThisRounded}%
+        </p>
+        <p className={'mt-3 text-sm font-medium ' + trendColor}>{trendLabel}</p>
+      </div>
 
-      <div className="mt-6 max-w-sm space-y-3">
+      <div className="space-y-3 sm:border-s sm:border-border sm:ps-8">
         <BarRow label={ar.dashboard_thisWeek} value={thisRounded} />
         <BarRow label={ar.dashboard_lastWeek} value={lastRounded} />
       </div>

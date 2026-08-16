@@ -141,7 +141,7 @@ export default function PatientsImport() {
 
   return (
     <section className="rounded-2xl border border-border bg-surface p-6">
-      <h2 className="text-sm font-bold text-text">{ar.import_title}</h2>
+      <h2 className="text-base font-bold text-text">{ar.import_title}</h2>
       <p className="mt-1.5 text-sm text-text-muted">{ar.import_intro}</p>
       <p className="mt-1 text-xs text-text-muted">{ar.import_excelHint}</p>
 
