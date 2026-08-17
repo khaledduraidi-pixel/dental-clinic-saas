@@ -65,7 +65,7 @@ export default function PatientCombobox({
       />
 
       {open && (
-        <div className="absolute z-30 mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-border bg-surface shadow-lg">
+        <div className="absolute z-30 mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-outline-variant bg-surface-low shadow-lg">
           {matches.map((p) => (
             <button
               key={p.id}
@@ -75,17 +75,17 @@ export default function PatientCombobox({
                 setQuery(p.name)
                 setOpen(false)
               }}
-              className="flex w-full items-center justify-between px-3 py-2 text-start text-sm outline -outline-offset-2 outline-2 outline-transparent hover:bg-bg focus-visible:outline-focus"
+              className="flex w-full items-center justify-between px-3 py-2 text-start text-sm outline -outline-offset-2 outline-2 outline-transparent hover:bg-surface focus-visible:outline-primary"
             >
-              <span className="font-medium text-text">{p.name}</span>
-              <span className="font-mono text-xs text-text-muted" dir="ltr">
+              <span className="font-medium text-on-surface">{p.name}</span>
+              <span className="font-mono text-xs text-on-surface-variant" dir="ltr">
                 {p.phone}
               </span>
             </button>
           ))}
 
           {matches.length === 0 && (
-            <p className="px-3 py-2 text-sm text-text-muted">{ar.appt_noPatientsFound}</p>
+            <p className="px-3 py-2 text-sm text-on-surface-variant">{ar.appt_noPatientsFound}</p>
           )}
 
           <button
@@ -94,7 +94,7 @@ export default function PatientCombobox({
               onAddNew(query.trim())
               setOpen(false)
             }}
-            className="flex w-full items-center gap-1.5 border-t border-border px-3 py-2 text-start text-sm font-medium text-primary-dark outline -outline-offset-2 outline-2 outline-transparent hover:bg-primary-soft focus-visible:outline-focus"
+            className="flex w-full items-center gap-1.5 border-t border-outline-variant px-3 py-2 text-start text-sm font-medium text-on-primary-container outline -outline-offset-2 outline-2 outline-transparent hover:bg-primary-container focus-visible:outline-primary"
           >
             + {ar.appt_addNewPatient}
           </button>

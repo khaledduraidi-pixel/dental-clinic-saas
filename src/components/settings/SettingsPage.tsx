@@ -7,8 +7,8 @@ import MessagesLog from './MessagesLog'
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight text-text">{ar.settings_title}</h1>
+    <div className="space-y-4 pb-2">
+      <h1 className="pt-1 text-headline font-normal text-on-surface">{ar.settings_title}</h1>
       <ClinicInfoSettings />
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <DoctorsSettings />

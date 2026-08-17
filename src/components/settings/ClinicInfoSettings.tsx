@@ -50,9 +50,9 @@ export default function ClinicInfoSettings() {
   }
 
   return (
-    <section className="rounded-2xl border border-primary/25 bg-surface p-6 sm:p-8">
-      <h2 className="flex items-center gap-2 text-base font-bold text-text">
-        <span aria-hidden="true" className="h-2 w-2 rounded-sm bg-accent" />
+    <section className="rounded-md bg-surface-low p-4 sm:p-6">
+      <h2 className="flex items-center gap-2 text-title font-semibold text-on-surface">
+        <span aria-hidden="true" className="h-2 w-2 rounded-sm bg-primary" />
         {ar.settings_clinicInfo}
       </h2>
 
@@ -86,16 +86,16 @@ export default function ClinicInfoSettings() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-text">{ar.settings_workingHours}</label>
+            <label className="mb-1.5 block text-sm font-medium text-on-surface">{ar.settings_workingHours}</label>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1 block text-xs text-text-muted" htmlFor="workingHoursStart">
+                <label className="mb-1 block text-xs text-on-surface-variant" htmlFor="workingHoursStart">
                   {ar.settings_workingHoursFrom}
                 </label>
                 <TimeWheelPicker id="workingHoursStart" value={hoursStart} onChange={setHoursStart} />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-text-muted" htmlFor="workingHoursEnd">
+                <label className="mb-1 block text-xs text-on-surface-variant" htmlFor="workingHoursEnd">
                   {ar.settings_workingHoursTo}
                 </label>
                 <TimeWheelPicker id="workingHoursEnd" value={hoursEnd} onChange={setHoursEnd} />
@@ -119,7 +119,7 @@ export default function ClinicInfoSettings() {
           </Select>
 
           {error && (
-            <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+            <p role="alert" className="rounded-xl bg-error-container px-3 py-2.5 text-sm text-error">
               {error}
             </p>
           )}

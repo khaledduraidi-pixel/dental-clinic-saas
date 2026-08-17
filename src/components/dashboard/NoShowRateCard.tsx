@@ -1,20 +1,14 @@
 import ar from '../../i18n/ar'
 import { useCountUp } from '../../hooks/useCountUp'
 
-interface NoShowRateCardProps {
-  thisWeek: number
-  lastWeek: number
-}
+// The owner's headline metric. It lives here, on Reports — not on the home
+// screen, where a receptionist needs "who is next", not a monthly percentage.
+export default function NoShowRateCard({ thisWeek, lastWeek }: { thisWeek: number; lastWeek: number }) {
+  const now = Math.round(thisWeek)
+  const prev = Math.round(lastWeek)
+  const display = useCountUp(now)
 
-// The screen's centerpiece per spec: the number a clinic owner points to
-// when justifying the subscription, so it gets the largest type on the
-// page and the same red used for the no_show status chip elsewhere.
-export default function NoShowRateCard({ thisWeek, lastWeek }: NoShowRateCardProps) {
-  const thisRounded = Math.round(thisWeek)
-  const lastRounded = Math.round(lastWeek)
-  const displayThisRounded = useCountUp(thisRounded)
-
-  const trend = thisRounded < lastRounded ? 'improvement' : thisRounded > lastRounded ? 'worsening' : 'noChange'
+  const trend = now < prev ? 'improvement' : now > prev ? 'worsening' : 'noChange'
   const trendLabel = {
     improvement: ar.dashboard_improvement,
     worsening: ar.dashboard_worsening,
@@ -23,37 +17,35 @@ export default function NoShowRateCard({ thisWeek, lastWeek }: NoShowRateCardPro
   const trendColor = {
     improvement: 'text-success',
     worsening: 'text-error',
-    noChange: 'text-text-muted',
+    noChange: 'text-on-surface-variant',
   }[trend]
-  const numberColor = thisRounded >= 20 ? 'text-error' : thisRounded >= 10 ? 'text-warning' : 'text-success'
 
   return (
-    <div className="mt-6 grid gap-8 rounded-2xl border border-border bg-surface p-8 sm:grid-cols-[1.2fr_1fr] sm:items-center">
-      <div>
-        <p className="text-sm font-medium text-text-muted">{ar.dashboard_noShowRateTitle}</p>
-        <p className={'mt-2 font-mono text-7xl font-bold leading-none tabular-nums ' + numberColor}>
-          {displayThisRounded}%
-        </p>
-        <p className={'mt-3 text-sm font-medium ' + trendColor}>{trendLabel}</p>
-      </div>
+    <section className="rounded-md bg-primary-container p-5 text-on-primary-container sm:p-6">
+      <p className="text-body-sm font-semibold opacity-80">{ar.dashboard_noShowRateTitle}</p>
+      <p className="tnum mt-1 text-display font-semibold leading-none">{display}%</p>
+      <p className={'mt-3 text-body-sm font-semibold ' + trendColor}>{trendLabel}</p>
 
-      <div className="space-y-3 sm:border-s sm:border-border sm:ps-8">
-        <BarRow label={ar.dashboard_thisWeek} value={thisRounded} />
-        <BarRow label={ar.dashboard_lastWeek} value={lastRounded} />
+      <div className="mt-5 space-y-3">
+        <Bar label={ar.dashboard_thisWeek} value={now} />
+        <Bar label={ar.dashboard_lastWeek} value={prev} />
       </div>
-    </div>
+    </section>
   )
 }
 
-function BarRow({ label, value }: { label: string; value: number }) {
+function Bar({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <div className="mb-1 flex items-center justify-between text-xs text-text-muted">
+      <div className="flex items-center justify-between text-label-sm">
         <span>{label}</span>
-        <span className="font-mono tabular-nums">{value}%</span>
+        <span className="tnum">{value}%</span>
       </div>
-      <div className="h-2 w-full rounded-full bg-bg">
-        <div className="h-2 rounded-full bg-error" style={{ width: `${Math.min(value, 100)}%` }} />
+      <div className="mt-1 h-2 overflow-hidden rounded-full bg-on-primary-container/15">
+        <div
+          className="h-full rounded-full bg-on-primary-container"
+          style={{ width: `${Math.min(value, 100)}%` }}
+        />
       </div>
     </div>
   )

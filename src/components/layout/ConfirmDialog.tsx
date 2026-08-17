@@ -25,7 +25,7 @@ export default function ConfirmDialog({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -33,20 +33,20 @@ export default function ConfirmDialog({
           onClick={onCancel}
         >
           <motion.div
-            className="w-full max-w-sm rounded-2xl bg-surface p-6 shadow-2xl"
+            className="w-full max-w-sm rounded-xl bg-surface-high p-6"
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 8 }}
             transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-lg font-bold text-text">{title}</h2>
-            <p className="mt-2 text-sm leading-relaxed text-text-muted">{body}</p>
+            <h2 className="text-title-lg font-normal text-on-surface">{title}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">{body}</p>
             <div className="mt-6 flex justify-end gap-3">
-              <Button variant="secondary" onClick={onCancel}>
+              <Button variant="text" onClick={onCancel}>
                 {ar.common_no}
               </Button>
-              <Button variant={danger ? 'danger' : 'primary'} onClick={onConfirm}>
+              <Button variant={danger ? 'danger' : 'filled'} onClick={onConfirm}>
                 {ar.common_yes}
               </Button>
             </div>

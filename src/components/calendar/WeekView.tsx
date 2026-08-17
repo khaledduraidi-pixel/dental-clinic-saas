@@ -40,8 +40,8 @@ export default function WeekView({
       date: day,
       header: (
         <div className="text-sm">
-          <div className="font-medium text-text">{format(day, 'EEEE', { locale: arLocale })}</div>
-          <div className="text-xs text-text-muted">{format(day, 'd MMM', { locale: arLocale })}</div>
+          <div className="font-medium text-on-surface">{format(day, 'EEEE', { locale: arLocale })}</div>
+          <div className="text-xs text-on-surface-variant">{format(day, 'd MMM', { locale: arLocale })}</div>
         </div>
       ),
       // Matched by the appointment's calendar day *in the clinic's timezone*,

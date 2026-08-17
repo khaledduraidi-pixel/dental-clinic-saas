@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { addDays, addWeeks, format, startOfDay, startOfWeek, subDays, subWeeks } from 'date-fns'
+import { addDays, format, startOfDay, startOfWeek } from 'date-fns'
 import { ar as arLocale } from 'date-fns/locale'
 import ar from '../../i18n/ar'
 import Button from '../ui/Button'
@@ -11,6 +11,10 @@ import { usePatients } from '../../hooks/usePatients'
 import { useAppointments, type AppointmentWithRelations } from '../../hooks/useAppointments'
 import { useReminderAutoProcessor, useReminders } from '../../hooks/useReminders'
 import DoctorFilterChips from './DoctorFilterChips'
+import DayStrip from './DayStrip'
+import NextUpCard from './NextUpCard'
+import TodayList from './TodayList'
+import Fab from '../ui/Fab'
 import DayView from './DayView'
 import WeekView from './WeekView'
 import AppointmentModal from './AppointmentModal'
@@ -18,18 +22,6 @@ import AppointmentDetailPanel from './AppointmentDetailPanel'
 import type { SlotParts } from './TimeGrid'
 
 type ViewMode = 'day' | 'week'
-
-function ChevronIcon({ direction }: { direction: 'start' | 'end' }) {
-  // "start" points toward the reading-start side (right, in RTL) — used for
-  // "previous". "end" points toward the reading-end side (left) — "next".
-  // These are the RTL-mirrored equivalents of the LTR back/forward chevrons.
-  const path = direction === 'start' ? 'M12.5 15L7.5 10L12.5 5' : 'M7.5 15L12.5 10L7.5 5'
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d={path} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
 
 export default function CalendarPage() {
   const { clinic } = useClinic()
@@ -72,15 +64,6 @@ export default function CalendarPage() {
   const endHour = clinic ? Number(clinic.working_hours_end.slice(0, 2)) : 20
   const timezone = clinic?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
 
-  function goToday() {
-    setAnchorDate(new Date())
-  }
-  function goPrevious() {
-    setAnchorDate((d) => (viewMode === 'day' ? subDays(d, 1) : subWeeks(d, 1)))
-  }
-  function goNext() {
-    setAnchorDate((d) => (viewMode === 'day' ? addDays(d, 1) : addWeeks(d, 1)))
-  }
 
   function openNewAppointment(doctorId: string | null, slot: SlotParts | null) {
     setEditingAppointment(null)
@@ -107,55 +90,49 @@ export default function CalendarPage() {
       ? format(anchorDate, 'EEEE d MMMM yyyy', { locale: arLocale })
       : `${format(rangeStart, 'd MMM', { locale: arLocale })} — ${format(addDays(rangeStart, 6), 'd MMM yyyy', { locale: arLocale })}`
 
+  // The next appointment still ahead of now, today only — drives the hero card.
+  const nextUp = useMemo(() => {
+    const now = Date.now()
+    return [...appointments]
+      .filter((a) => a.status !== 'cancelled' && new Date(a.starts_at).getTime() >= now)
+      .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime())[0]
+  }, [appointments])
+
   return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold tracking-tight text-text">{ar.calendar_title}</h1>
-        <Button onClick={() => openNewAppointment(null, null)}>{ar.calendar_newAppointment}</Button>
-      </div>
+    <div className="pb-2">
+      <DayStrip anchor={anchorDate} onSelect={setAnchorDate} />
 
-      <div className="mt-4 rounded-2xl border border-border bg-surface p-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Button variant="secondary" className="h-9 px-3 text-xs" onClick={goToday}>
-              {ar.calendar_today}
-            </Button>
-            <Button variant="ghost" className="h-9 w-9 px-0" onClick={goPrevious} aria-label={ar.common_previous}>
-              <ChevronIcon direction="start" />
-            </Button>
-            <Button variant="ghost" className="h-9 w-9 px-0" onClick={goNext} aria-label={ar.common_next}>
-              <ChevronIcon direction="end" />
-            </Button>
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-headline font-normal text-on-surface">{rangeLabel}</h1>
+        <div className="hidden items-center gap-2 sm:flex">
+          <div className="flex gap-1 rounded-full bg-surface-low p-1">
+            {(['day', 'week'] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setViewMode(m)}
+                aria-pressed={viewMode === m}
+                className={
+                  'rounded-full px-4 py-1.5 text-label font-semibold outline outline-2 outline-offset-2 outline-transparent transition-colors focus-visible:outline-primary ' +
+                  (viewMode === m
+                    ? 'bg-primary-container text-on-primary-container'
+                    : 'text-on-surface-variant hover:bg-surface-high')
+                }
+              >
+                {m === 'day' ? ar.calendar_dayView : ar.calendar_weekView}
+              </button>
+            ))}
           </div>
-
-          <div className="flex overflow-hidden rounded-xl border border-border">
-            <button
-              type="button"
-              onClick={() => setViewMode('day')}
-              className={
-                'px-4 py-2 text-sm font-medium outline outline-2 -outline-offset-2 outline-transparent transition-colors focus-visible:outline-focus ' +
-                (viewMode === 'day' ? 'bg-primary-soft text-primary-dark' : 'text-text-muted hover:bg-bg')
-              }
-            >
-              {ar.calendar_dayView}
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('week')}
-              className={
-                'px-4 py-2 text-sm font-medium outline outline-2 -outline-offset-2 outline-transparent transition-colors focus-visible:outline-focus ' +
-                (viewMode === 'week' ? 'bg-primary-soft text-primary-dark' : 'text-text-muted hover:bg-bg')
-              }
-            >
-              {ar.calendar_weekView}
-            </button>
-          </div>
+          <Button variant="tonal" icon="plus" onClick={() => openNewAppointment(null, null)}>
+            {ar.calendar_newAppointment}
+          </Button>
         </div>
-
-        <p className="mt-3 text-sm font-medium text-text">{rangeLabel}</p>
       </div>
 
-      <div className="mt-4">
+      {/* doctor filter: the desktop grid has a column per doctor, so filtering
+          matters there. The mobile list is chronological and short — the chips
+          would be clutter. */}
+      <div className="mt-4 hidden sm:block">
         {doctorsLoading ? (
           <Skeleton className="h-8 w-64" />
         ) : (
@@ -167,7 +144,34 @@ export default function CalendarPage() {
         )}
       </div>
 
-      <div className="mt-4 rounded-2xl border border-border bg-surface p-4">
+      {/* mobile: next-up + chronological list */}
+      <div className="mt-4 space-y-5 sm:hidden">
+        {loading || doctorsLoading ? (
+          <Skeleton className="h-64 w-full" />
+        ) : (
+          <>
+            {nextUp && (
+              <NextUpCard
+                appointment={nextUp}
+                timeZone={timezone}
+                onMarkArrived={(id) => void setAppointmentStatus(id, 'completed')}
+                onOpen={setSelectedAppointment}
+              />
+            )}
+            <div>
+              <h2 className="mb-2 text-title font-semibold text-on-surface">{ar.today_appointments}</h2>
+              <TodayList
+                appointments={appointments}
+                timeZone={timezone}
+                onOpen={setSelectedAppointment}
+              />
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* desktop: multi-doctor time grid */}
+      <div className="mt-4 hidden rounded-md bg-surface-low p-4 sm:block">
         {loading || doctorsLoading ? (
           <Skeleton className="h-96 w-full" />
         ) : viewMode === 'day' ? (
@@ -196,6 +200,11 @@ export default function CalendarPage() {
             onAppointmentClick={setSelectedAppointment}
           />
         )}
+      </div>
+
+      {/* extended FAB — mobile only; desktop has the tonal button in the header */}
+      <div className="fixed bottom-24 end-4 z-30 sm:hidden">
+        <Fab onClick={() => openNewAppointment(null, null)}>{ar.calendar_newAppointment}</Fab>
       </div>
 
       <AppointmentModal

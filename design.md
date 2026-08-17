@@ -1,213 +1,185 @@
 # Design — عيادتي (Eyadati)
 
-A locked design system for this app, produced by a Hallmark multi-page
-redesign. Every page redesign reads this file before emitting code. Do not
-regenerate per page — extend or amend this file when the system needs to
-grow.
+The locked design system for this app. Every screen reads this file before
+emitting code. Do not regenerate per screen — amend this file when the system
+needs to grow.
 
-This is a working product, not a marketing site. The 21 Hallmark
-macrostructures are landing-page shapes and don't map onto a calendar grid,
-a patient table, or a settings form — so the "macrostructure family" below
-is bespoke structure (Hallmark's own carve-out for page-shapes no catalog
-macrostructure fits), not a catalog pick. Every other discipline (OKLCH
-colour, 2+1 typography, 4pt spacing, motion/easing canon, 8-state
-interaction contract, contrast, mobile floor) still applies in full.
+## Provenance — where these numbers come from
 
-## Genre
+This system is **derived, not invented**. Earlier attempts were authored from
+taste and read as machine-generated; the fix was to take the numbers from real
+design systems that actually ship.
 
-modern-minimal (Stripe / Linear school) — a professional B2B clinic
-dashboard, not atmospheric or playful.
+| Source | What was taken | Read from |
+| --- | --- | --- |
+| **Material 3** (`material-components/material-web`) | shape scale, type scale, component heights, state-layer opacities, elevation levels, tonal-surface model | `tokens/versions/latest/sass/_md-sys-*.scss`, `_md-comp-*.scss` |
+| **NHS.UK** (`nhsuk/nhsuk-frontend`) | the discipline of two font weights only; action colour separated from brand colour; blue-tinted (never neutral) greys | `packages/nhsuk-frontend/src/nhsuk/core/settings/` |
+| **Primer** (`primer/primitives`) | "use an inset box-shadow instead of a border to prevent layout shift"; small-radius rule (≤ 16px elements only) | `src/tokens/functional/size/` |
 
-## Language & direction
+Genre: **Material 3, tonal.** Hierarchy comes from *surface tone*, not from
+borders or shadows. This is the system's single most important rule.
 
-Arabic (RTL) is the only shipped language. Every layout uses CSS logical
-properties (`margin-inline-start`, `padding-inline-end`, `border-inline-*`,
-`inset-inline-*`) — never physical `left`/`right`. Phone numbers, dates-in-
-digits and clock times are the only LTR runs on the page and are wrapped in
-`dir="ltr"` spans, set in the mono outlier face with tabular figures.
+---
 
-## Macrostructure family
+## 1. Colour — tonal roles
 
-- **App pages** (Calendar, Patients, Dashboard, Settings): **Clinical
-  Canvas** — the existing top-bar `AppShell` kept as the IA (no move to a
-  sidebar), refined into a calmer instrument panel: a slim sticky top bar,
-  generous content canvas with `--space-2xl` outer padding, one consistent
-  card/table/chip/form voice. Zero decorative enrichment — function carries
-  every one of these screens. Full 8-state discipline on every interactive
-  element (see Interaction section below).
-- **Auth pages** (Login, Signup): **Clinical Canvas — quiet variant** — no
-  top bar, no nav chrome, a single centred column (max `28rem`), generous
-  top whitespace (`--space-3xl` before the form), the wordmark stands alone
-  above the form as the only brand moment on the page.
-
-## Theme
-
-Custom, tuned — not catalog. This product already has a real, established
-brand identity (teal + warm sand); the palette below is that identity
-refined into OKLCH, not replaced.
+Seeded on the product's existing teal. Chroma pulled back from the raw seed
+output so it reads clinical rather than candy-bright.
 
 ```css
-:root {
-  /* paper / surface */
-  --color-bg:            oklch(98% 0.008 85);   /* was #faf9f6 */
-  --color-surface:       oklch(99.5% 0.004 85);  /* was #ffffff — never pure white */
-  --color-surface-raised: oklch(100% 0 0);        /* modals/popovers only, sits on --color-bg */
+--color-surface:            #F7FAFA;  /* app background */
+--color-surface-low:        #EFF4F4;  /* list items, cards */
+--color-surface-high:       #E1EAEB;  /* search bar, emphasis card, hover */
+--color-surface-highest:    #DAE4E5;  /* neutral chips */
+--color-on-surface:         #171D1E;  /* primary text */
+--color-on-surface-variant: #3F4949;  /* secondary text, icons */
+--color-outline-variant:    #BEC8C9;  /* the ONLY divider colour */
 
-  /* ink */
-  --color-text:          oklch(20% 0.010 50);    /* was #1c1917 */
-  --color-text-muted:    oklch(46% 0.012 60);    /* was #57534e */
+--color-primary:            #00696E;  /* selected day, active states */
+--color-on-primary:         #FFFFFF;
+--color-primary-container:  #C2E3E5;  /* FAB, buttons, nav indicator, plan card */
+--color-on-primary-container:#00201F;
 
-  /* neutrals */
-  --color-border:        oklch(90% 0.006 70);    /* was #e7e5e4 */
-  --color-border-strong: oklch(80% 0.008 70);    /* new — stronger dividers, off-hours shading */
-
-  /* accent 1 — teal (trust / primary action) */
-  --color-primary:       oklch(51% 0.11 186);    /* was #0f766e */
-  --color-primary-dark:  oklch(38% 0.075 188);   /* was #134e4a */
-  --color-primary-soft:  oklch(94% 0.045 182);   /* was #ccfbf1 */
-  --color-primary-ink:   oklch(99% 0.004 85);    /* text-on-primary; passes APCA Lc ≥ 60 */
-
-  /* accent 2 — terracotta (warmth / secondary highlight) */
-  --color-accent:        oklch(64% 0.15 48);     /* was #f4a261 — deepened from pastel */
-  --color-accent-soft:   oklch(95% 0.03 70);     /* was #fef3e2 */
-  --color-accent-ink:    oklch(99% 0.004 85);    /* text-on-accent */
-
-  /* focus */
-  --color-focus:         oklch(58% 0.14 186);    /* teal, brighter than --color-primary */
-
-  /* semantic — functional signal colours, exempt from the "≤3% accent"
-     restraint rule; they encode data (appointment status), not brand */
-  --color-success:       oklch(48% 0.13 148);    /* was #15803d */
-  --color-success-soft:  oklch(95% 0.045 150);
-  --color-warning:       oklch(52% 0.14 55);     /* was #b45309 */
-  --color-warning-soft:  oklch(95% 0.055 90);
-  --color-error:         oklch(48% 0.17 27);     /* was #b91c1c */
-  --color-error-soft:    oklch(93% 0.035 22);
-}
+--color-error:              #BA1A1A;  --color-error-container:  #F4DAD7;
+--color-on-error-container: #410002;
+--color-success:            #106B3E;  --color-success-container:#D2E9DA;
+--color-on-success-container:#04361C;
+--color-warning:            #7A5300;  --color-warning-container:#F5E4C3;
+--color-on-warning-container:#261A00;
 ```
 
-## Typography
+**Rules**
+- No borders on content surfaces. No decorative shadows anywhere.
+- Elevation exists in exactly one place: the FAB (`level3`). That is M3's own
+  exception, not ours.
+- Every surface that sets a background also sets its `on-*` text colour.
+- Per-doctor calendar colours and status colours are **data**, exempt from the
+  single-accent rule — they encode information.
 
-Single-family discipline (per modern-minimal's own preference, and because
-pairing in a second Arabic display face risks a mismatched register):
+## 2. Typography
 
-```css
-:root {
-  --font-display: 'IBM Plex Sans Arabic', 'Cairo', system-ui, sans-serif;
-  --font-body:    'IBM Plex Sans Arabic', 'Cairo', system-ui, sans-serif;
-  --font-outlier: 'JetBrains Mono', ui-monospace, monospace; /* numerals only:
-    phone numbers, clock times, appointment durations, table figures — never
-    a third prose voice */
-}
-```
+**Cairo**, weights **400 and 600 only** (NHS's two-weight discipline; M3's
+`weight-regular` / `weight-medium`).
 
-- Display weight 600–700, tight tracking (`-0.01em`; Arabic scripts don't
-  want the aggressive `-0.03em` Latin display tracking — it breaks joins).
-- Body weight 400/500. Never below 500 for UI labels (Arabic at 400 on a
-  screen under 14px gets illegible at typical dashboard zoom).
-- Every clock time, phone number, and count uses `--font-outlier` +
-  `font-variant-numeric: tabular-nums` inside a `dir="ltr"` span.
+| Role | Size / line-height | Weight | Used for |
+| --- | --- | --- | --- |
+| `display` | 36 / 40 | 600 | the one big figure on Reports |
+| `headline-small` | 24 / 32 | **400** | screen titles on sub-screens |
+| `title-large` | 22 / 28 | **400** | top app bar, next-up patient name |
+| `title-medium` | 16 / 24 | 600 | list headline, section label, card title |
+| `body-large` | 16 / 24 | 400 | search text, form values |
+| `body-medium` | 14 / 20 | 400 | supporting text |
+| `label-large` | 14 / 20 | 600 | buttons |
+| `label-medium` | 12 / 16 | 600 | nav labels, eyebrows, timestamps |
 
-## Spacing
+Large headings take weight **400**, not bold — M3 sets `title-large-weight:
+weight-regular`, and bolding them was a real error in an earlier pass.
 
-4pt scale via Tailwind's default `--spacing: 0.25rem` multiplier (`p-4`,
-`gap-6`, `px-8`, …) — **not** a custom named `--spacing-xs/sm/md/…` block in
-`@theme`. Tailwind v4 reserves exactly those names for its own built-in
-`max-w-*` / `w-*` / `h-*` scale; a first pass at this redesign defined a
-custom 4pt scale under those names and it silently collapsed every
-`max-w-sm` / `max-w-lg` / etc. in the app to a few px (caught via
-screenshot QA, fixed by removing the block — see `src/index.css`). Named
-role-based spacing stays a *convention* enforced by review, not a token:
-card padding (`p-6`/`p-8`) ≠ section gaps (`gap-6`, `mt-10`+) ≠ page edge
-padding (`px-4 sm:px-6 lg:px-8`) — never flatten these to one value.
+**Arabic-specific, non-negotiable**
+- **Never letter-space Arabic.** It is a connected script; tracking breaks the
+  joins. Hierarchy comes from size, weight and space only.
+- Latin runs inside Arabic prose (`08:00`, `+970599111222`, `44px`) must be
+  wrapped in `<bdi>` or a `dir="ltr"` span, or they reorder across line breaks.
+- Western Arabic numerals throughout, `font-variant-numeric: tabular-nums` on
+  every figure that lines up in a column.
 
-## Motion
-
-framer-motion stays (already installed, already used for the shared-layout
-nav pill and button press feedback — motion-on project). No new library.
-
-- Easings: `--ease-out: cubic-bezier(0.16, 1, 0.3, 1)`, `--ease-in:
-  cubic-bezier(0.7, 0, 0.84, 0)`.
-- Spring physics only for physical interactions already in the codebase
-  (button press, TimeWheelPicker snap, modal materialize) — critically
-  damped (`bounce: 0`), never overshoot.
-- Reduced motion: already wired via `<MotionConfig reducedMotion="user">`
-  in `App.tsx` — keep it, don't reintroduce per-component overrides.
-- No more than 2–3 motion primitives per screen: page-load reveal is OFF
-  (this is a dashboard staff open 40 times a day — a fade-in on every visit
-  is friction, not delight). Keep: button press, modal/popover
-  materialize, shared-layout nav pill, TimeWheelPicker momentum.
-
-## Microinteractions stance
-
-- **Silent success.** Saving a patient, appointment, or settings change
-  updates the UI and closes the modal — no "تم الحفظ!" toast. The visible
-  result (the new row, the closed modal) is the confirmation.
-- **Errors always surface** — inline under the field (form errors) or as a
-  toast with retry (network/save failures) — never silent.
-- Hover delay 800ms / focus delay 0ms on any tooltip.
-- Optimistic updates only where the codebase already round-trips fast
-  (status changes); nothing here needs new optimistic-with-rollback
-  plumbing beyond what exists.
-
-## Interaction contract (every input, select, textarea, button)
-
-Full 8-state discipline — default · hover · focus · active · disabled ·
-loading · error · success — per the no-layout-shift rule: border-width is
-always `1px`, state changes go to `background-color` / `outline` /
-`box-shadow`, never to geometry. Base control height `2.75rem` (44px) for
-every text input, select, and button so rows never feel mismatched.
-Right-edge 24px slot reserved on every input for an error glyph / clear /
-spinner. Implemented once as shared primitives (`src/components/ui/Input.tsx`,
-`Select.tsx`, `Textarea.tsx`, `FieldLabel.tsx`) and reused everywhere —
-no more hand-rolled `<input className="...">` per form.
-
-## CTA voice
-
-- Primary: filled `--color-primary`, `--color-primary-ink` text, `rounded-xl`
-  (10px), height 44px. Hover: `--color-primary-dark`. Press: `scale(0.97)`
-  spring (existing Button.tsx pattern — keep).
-- Secondary: outline `--color-primary` at 40% on `--color-surface`, hover
-  fills `--color-primary-soft`.
-- Destructive: filled `--color-error`, white-on-error text, reserved for
-  genuinely destructive actions (delete patient/doctor) — irreversible ones
-  keep the existing confirm dialog (typed confirmation not required at this
-  scale; a named ConfirmDialog is enough for a clinic-staff tool).
-- Ghost: transparent, `--color-text-muted`, hover `--color-bg`.
-
-## Per-page allowances
-
-- No page in this app uses hero enrichment (CSS art / SVG / imagery) — this
-  is an operational tool, not a marketing surface. Typography, colour,
-  spacing, and state design carry every screen.
-
-## What pages MUST share
-
-- The single teal + terracotta accent pair, at the restraint discipline
-  above (semantic status colours and per-doctor calendar colours are the
-  documented exemption).
-- IBM Plex Sans Arabic display + body, JetBrains Mono numerals-only.
-- The CTA voice (button shape, radius, height, padding rhythm) exactly as
-  specified above.
-- The `AppShell` top bar and its shared-layout nav pill.
-- The 8-state input contract via the shared primitives.
-
-## What pages MAY differ on
-
-- Card/table/list layout specific to that screen's data shape (calendar
-  grid vs. patient table vs. settings form vs. dashboard stat tiles).
-
-## Stamp
+## 3. Shape (M3 shape scale — real values)
 
 ```
-/* Hallmark · genre: modern-minimal · macrostructure: Clinical Canvas (bespoke, app-shape) · theme: custom (teal + terracotta, tuned) · design-system: design.md · designed-as-app */
+none 0 · extra-small 4px · small 8px · medium 12px · large 16px
+large-increased 20px · extra-large 28px · full 9999px
 ```
 
-## Exports
+- List items, cards, the plan card: **12px** (`medium`)
+- FAB: **16px** (`large`)
+- Search bar, buttons, chips, nav indicator, day pills: **full**
+- Status chips: **8px** (`small`)
+- Nothing gets a radius merely for looking modern; each maps to a token.
 
-### tokens.css (mirrors the `@theme` block in `src/index.css`)
+## 4. Component sizes (M3 component tokens — real values)
 
-See the Theme + Spacing + Typography sections above — `src/index.css` is
-the single source; this file documents the values, `src/index.css` is
-where they're authored (Tailwind v4 `@theme` inline, no separate
-`tokens.css` file needed for a single-app Vite project).
+| Component | Value | Token |
+| --- | --- | --- |
+| Top app bar | 64px | `md-comp-top-app-bar-small: container-height` |
+| Search bar | 56px, `corner-full` | `md-comp-search-bar` |
+| Navigation bar | 80px | `md-comp-navigation-bar: container-height` |
+| Nav active indicator | 64 × 32px, `corner-full` | same |
+| Extended FAB | 56px tall, radius 16px, `level3` | `md-comp-fab-primary` |
+| Filled-tonal button | 40px, `corner-full`, label 14/600 | `md-comp-filled-tonal-button` |
+| List item (two-line) | 72px | `md-comp-list` |
+| Icon | 24px (18px inside buttons) | `md-comp-fab: icon-size` |
+| Icon button target | 48px | touch floor |
+
+Touch targets never below **48px**. Icons are inline SVG — never emoji.
+
+## 5. Spacing
+
+4pt scale via Tailwind's default multiplier (`p-4`, `gap-2`, `px-6`).
+**Do not** define a custom `--spacing-{xs,sm,md,lg,…}` block in `@theme`:
+Tailwind v4 reserves those names for its own `max-w-*` / `w-*` / `h-*` scale,
+and overriding them silently collapses every `max-w-sm`/`max-w-lg` in the app.
+That bug happened once already — see the note in `src/index.css`.
+
+Screen padding `16px` mobile / `24px` desktop. Gap between list items `8px`.
+
+## 6. State (M3 state layers)
+
+State is a translucent overlay of the foreground colour — never a colour swap.
+
+```
+hover 8%  ·  focus 10%  ·  pressed 10%
+```
+
+Every interactive element ships all eight states: default · hover ·
+`:focus-visible` · active · disabled · loading · error · success. Focus ring is
+never animated. Border width never changes between states (Primer's
+layout-shift rule) — state goes to background, outline or box-shadow.
+
+## 7. Motion
+
+framer-motion, already in the project. Critically damped (`bounce: 0`) springs
+only; no overshoot on UI state. `<MotionConfig reducedMotion="user">` stays at
+the app root. Page-load reveals are **off** — staff open this app dozens of
+times a day.
+
+Permitted: button press, FAB press, sheet/modal materialize, shared-layout nav
+indicator, day-strip selection.
+
+## 8. Information architecture
+
+Four destinations. Mobile gets a bottom navigation bar; desktop gets pill nav
+in the top app bar. Same four, same order, same labels.
+
+| Tab | Screen | Job |
+| --- | --- | --- |
+| اليوم | Calendar | what is happening now — the daily driver |
+| المرضى | Patients + patient file | who they are, what they still need |
+| التقارير | Reports | no-show rate and trends — owner's view, monthly |
+| الإعدادات | Settings | clinic hours, doctors, WhatsApp, import |
+
+**The no-show rate does not belong on the home screen.** It is a reporting
+metric for the owner, not the first thing a receptionist needs at 8am. Home
+opens on **next up** — who is arriving, when, and the two actions that matter
+(mark arrived, call).
+
+## 9. Screens
+
+| Screen | Mobile | Desktop |
+| --- | --- | --- |
+| Login / Signup | single column, 16px padding, no nav chrome | same, centred, max 420px |
+| اليوم | day strip · next-up card · today's list · FAB | day strip · doctor-column grid |
+| المرضى | search · list of 72px items | search · list, wider |
+| ملف المريض | full screen: actions · plan card · visit timeline | side sheet, same content |
+| التقارير | stacked stat cards + the one big figure | same, in a row |
+| الإعدادات | stacked sections | sections, two-column where it helps |
+
+## 10. What this system refuses
+
+- Borders on cards, and decorative shadows anywhere (FAB excepted).
+- Gradients, glassmorphism, blur-behind-content.
+- A second accent hue for decoration.
+- Letter-spaced Arabic.
+- Emoji as icons.
+- Bold large headings.
+- Page-load animations on operational screens.
+- Radius chosen by feel instead of from the shape scale.

@@ -5,9 +5,9 @@ import { useClinic } from '../../hooks/useClinic'
 import { formatDateTimeAr } from '../../lib/dates'
 
 const STATUS_STYLES: Record<string, string> = {
-  sent: 'bg-success-soft text-success',
-  failed: 'bg-error-soft text-error',
-  received: 'bg-primary-soft text-primary-dark',
+  sent: 'bg-success-container text-success',
+  failed: 'bg-error-container text-error',
+  received: 'bg-primary-container text-on-primary-container',
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -21,44 +21,44 @@ export default function MessagesLog() {
   const { messages, loading, error } = useMessagesLog()
 
   return (
-    <section className="rounded-2xl border border-border bg-surface p-6">
-      <h2 className="text-base font-bold text-text">{ar.whatsapp_messagesLog}</h2>
+    <section className="rounded-md bg-surface-low p-4 sm:p-6">
+      <h2 className="text-title font-semibold text-on-surface">{ar.whatsapp_messagesLog}</h2>
 
       <div className="mt-4 space-y-2">
         {loading && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
 
         {!loading && error && (
-          <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+          <p role="alert" className="rounded-xl bg-error-container px-3 py-2.5 text-sm text-error">
             {ar.common_error}
           </p>
         )}
 
         {!loading && !error && messages.length === 0 && (
-          <p className="py-6 text-center text-sm text-text-muted">{ar.whatsapp_messagesLogEmpty}</p>
+          <p className="py-6 text-center text-sm text-on-surface-variant">{ar.whatsapp_messagesLogEmpty}</p>
         )}
 
         {!loading &&
           !error &&
           messages.map((m) => (
-            <div key={m.id} className="rounded-xl border border-border p-3">
+            <div key={m.id} className="rounded-sm bg-surface p-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-sm font-medium text-text" dir="ltr">
+                <span className="font-mono text-sm font-medium text-on-surface" dir="ltr">
                   {m.patient_phone}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-text-muted">
+                  <span className="text-xs text-on-surface-variant">
                     {formatDateTimeAr(m.created_at, clinic?.timezone)}
                   </span>
                   <span
                     className={
-                      'rounded-full px-2 py-0.5 text-xs ' + (STATUS_STYLES[m.status] ?? 'bg-border text-text-muted')
+                      'rounded-full px-2 py-0.5 text-xs ' + (STATUS_STYLES[m.status] ?? 'bg-outline-variant text-on-surface-variant')
                     }
                   >
                     {STATUS_LABELS[m.status] ?? m.status}
                   </span>
                 </div>
               </div>
-              <p className="mt-2 text-sm text-text-muted">{m.body}</p>
+              <p className="mt-2 text-sm text-on-surface-variant">{m.body}</p>
             </div>
           ))}
       </div>

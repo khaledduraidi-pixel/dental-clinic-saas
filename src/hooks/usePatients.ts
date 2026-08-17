@@ -96,6 +96,18 @@ export function usePatients() {
     return { error: null }
   }
 
+  // Isolated from updatePatient so saving a plan from the patient file never
+  // has to round-trip the name/phone fields it isn't editing.
+  async function updateTreatmentPlan(id: string, plan: string) {
+    const { error: updateError } = await supabase
+      .from('patients')
+      .update({ treatment_plan: plan.trim() || null })
+      .eq('id', id)
+    if (updateError) return { error: updateError.message }
+    await refresh()
+    return { error: null }
+  }
+
   async function deletePatient(id: string) {
     const { error: deleteError } = await supabase.from('patients').delete().eq('id', id)
     if (deleteError) return { error: deleteError.message }
@@ -120,5 +132,5 @@ export function usePatients() {
     return { error: null, inserted: data?.length ?? 0 }
   }
 
-  return { patients, loading, error, createPatient, updatePatient, deletePatient, importPatients, refresh }
+  return { patients, loading, error, createPatient, updatePatient, updateTreatmentPlan, deletePatient, importPatients, refresh }
 }

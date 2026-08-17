@@ -70,6 +70,8 @@ export interface Patient {
   name: string
   phone: string
   notes: string | null
+  // Free-text "what this patient still needs" — see migration 0006.
+  treatment_plan: string | null
   created_at: string
   updated_at: string
 }

@@ -94,7 +94,7 @@ function Wheel({
           }}
           className={
             'flex h-9 w-full snap-center items-center justify-center text-lg tabular-nums transition-all duration-150 ' +
-            (i === selectedIndex ? 'font-bold text-text' : 'text-text-muted/40')
+            (i === selectedIndex ? 'font-bold text-on-surface' : 'text-on-surface-variant/40')
           }
         >
           {format(item)}
@@ -138,10 +138,10 @@ export default function TimeWheelPicker({ id, value, onChange }: TimeWheelPicker
         type="button"
         onClick={() => setOpen((o) => !o)}
         dir="ltr"
-        className="flex w-full items-center justify-between rounded-xl border border-border px-3 py-2.5 text-start text-sm tabular-nums focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+        className="flex w-full items-center justify-between rounded-xl border border-outline-variant px-3 py-2.5 text-start text-sm tabular-nums focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
       >
         {formatDisplay(value)}
-        <svg className="h-4 w-4 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg className="h-4 w-4 text-on-surface-variant" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="12" cy="12" r="9" />
           <path d="M12 7v5l3 3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -156,17 +156,17 @@ export default function TimeWheelPicker({ id, value, onChange }: TimeWheelPicker
             transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
             style={{ transformOrigin: 'top' }}
             dir="ltr"
-            className="absolute z-30 mt-2 rounded-2xl border border-border bg-surface p-3 shadow-2xl"
+            className="absolute z-30 mt-2 rounded-md bg-surface-high p-3 shadow-[0_1px_3px_rgba(0,0,0,.15),0_4px_8px_3px_rgba(0,0,0,.15)]"
           >
             <div className="relative flex items-center">
-              <div className="pointer-events-none absolute inset-x-0 -z-10 top-1/2 h-9 -translate-y-1/2 rounded-lg bg-primary-soft" />
+              <div className="pointer-events-none absolute inset-x-0 -z-10 top-1/2 h-9 -translate-y-1/2 rounded-lg bg-primary-container" />
               <Wheel
                 items={HOURS}
                 selectedIndex={hour12 - 1}
                 onSelect={(i) => commitHour(HOURS[i])}
                 format={(h) => String(h).padStart(2, '0')}
               />
-              <span className="px-1 text-lg font-bold text-text-muted">:</span>
+              <span className="px-1 text-lg font-bold text-on-surface-variant">:</span>
               <Wheel
                 items={MINUTES}
                 selectedIndex={minute}
@@ -181,7 +181,7 @@ export default function TimeWheelPicker({ id, value, onChange }: TimeWheelPicker
                     onClick={() => commitPeriod(p)}
                     className={
                       'rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ' +
-                      (period === p ? 'bg-primary text-white' : 'bg-bg text-text-muted hover:text-text')
+                      (period === p ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface-variant hover:text-on-surface')
                     }
                   >
                     {p}
@@ -192,7 +192,7 @@ export default function TimeWheelPicker({ id, value, onChange }: TimeWheelPicker
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="mt-2 w-full rounded-lg py-1.5 text-center text-sm font-medium text-primary hover:bg-primary-soft"
+              className="mt-2 w-full rounded-lg py-1.5 text-center text-sm font-medium text-primary hover:bg-primary-container"
             >
               تم
             </button>

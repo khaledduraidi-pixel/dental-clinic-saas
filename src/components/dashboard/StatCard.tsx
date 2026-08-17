@@ -1,19 +1,12 @@
 import { useCountUp } from '../../hooks/useCountUp'
 
-interface StatCardProps {
-  label: string
-  value: number
-}
-
-// A stat-strip cell, not a boxed card — four of these sit inside one shared
-// band divided by hairlines (see DashboardPage), so the repetition reads as
-// one instrument panel instead of four identical bordered tiles.
-export default function StatCard({ label, value }: StatCardProps) {
-  const displayValue = useCountUp(value)
+// Tonal stat tile: surface-low, corner-medium, no border, no shadow.
+export default function StatCard({ label, value }: { label: string; value: number }) {
+  const display = useCountUp(value)
   return (
-    <div className="flex-1 px-5 py-4 first:ps-0 last:pe-0">
-      <p className="text-sm text-text-muted">{label}</p>
-      <p className="mt-1.5 font-mono text-2xl font-bold tabular-nums text-text">{displayValue}</p>
+    <div className="rounded-md bg-surface-low p-4">
+      <p className="text-body-sm text-on-surface-variant">{label}</p>
+      <p className="tnum mt-1 text-headline font-semibold text-on-surface">{display}</p>
     </div>
   )
 }

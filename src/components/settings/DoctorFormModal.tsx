@@ -117,7 +117,7 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -125,14 +125,14 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
           onClick={onClose}
         >
           <motion.div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-surface p-6 shadow-2xl"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-surface-high p-6"
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 8 }}
             transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-lg font-bold text-text">
+            <h2 className="text-title-lg font-normal text-on-surface">
               {doctor ? ar.doctor_editTitle : ar.doctor_addTitle}
             </h2>
 
@@ -147,7 +147,7 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
               />
 
               <div>
-                <span className="mb-1.5 block text-sm font-medium text-text">{ar.doctor_color}</span>
+                <span className="mb-1.5 block text-sm font-medium text-on-surface">{ar.doctor_color}</span>
                 <div className="flex flex-wrap gap-2">
                   {COLOR_PALETTE.map((c) => (
                     <button
@@ -157,8 +157,8 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
                       aria-label={c}
                       aria-pressed={color === c}
                       className={
-                        'h-8 w-8 rounded-full outline outline-2 outline-offset-2 outline-transparent ring-offset-2 transition-shadow focus-visible:outline-focus ' +
-                        (color === c ? 'ring-2 ring-text' : '')
+                        'h-8 w-8 rounded-full outline outline-2 outline-offset-2 outline-transparent ring-offset-2 transition-shadow focus-visible:outline-primary ' +
+                        (color === c ? 'ring-2 ring-on-surface' : '')
                       }
                       style={{ backgroundColor: c }}
                     />
@@ -167,30 +167,30 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
               </div>
 
               {doctor && (
-                <div className="rounded-xl border border-border p-3">
+                <div className="rounded-xl border border-outline-variant p-3">
                   <label className="flex items-center justify-between gap-3">
                     <span>
-                      <span className="block text-sm font-medium text-text">{ar.doctor_useCustomHours}</span>
-                      <span className="block text-xs text-text-muted">{ar.doctor_useCustomHoursHelp}</span>
+                      <span className="block text-sm font-medium text-on-surface">{ar.doctor_useCustomHours}</span>
+                      <span className="block text-xs text-on-surface-variant">{ar.doctor_useCustomHoursHelp}</span>
                     </span>
                     <input
                       type="checkbox"
                       checked={useCustomHours}
                       onChange={(e) => setUseCustomHours(e.target.checked)}
-                      className="h-5 w-5 accent-primary outline-2 outline-offset-2 outline-focus focus-visible:outline"
+                      className="h-5 w-5 accent-primary outline-2 outline-offset-2 outline-primary focus-visible:outline"
                     />
                   </label>
 
                   {useCustomHours && (
-                    <div className="mt-3 space-y-2 border-t border-border pt-3">
+                    <div className="mt-3 space-y-2 border-t border-outline-variant pt-3">
                       {DAYS.map((d) => (
                         <div key={d} className="flex flex-wrap items-center gap-2">
-                          <label className="flex w-24 items-center gap-2 text-sm text-text">
+                          <label className="flex w-24 items-center gap-2 text-sm text-on-surface">
                             <input
                               type="checkbox"
                               checked={schedule[d]?.enabled ?? false}
                               onChange={(e) => updateDay(d, { enabled: e.target.checked })}
-                              className="h-4 w-4 accent-primary outline-2 outline-offset-2 outline-focus focus-visible:outline"
+                              className="h-4 w-4 accent-primary outline-2 outline-offset-2 outline-primary focus-visible:outline"
                             />
                             {ar.doctor_days[d]}
                           </label>
@@ -200,11 +200,11 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
                                 value={schedule[d].start}
                                 onChange={(v) => updateDay(d, { start: v })}
                               />
-                              <span className="text-xs text-text-muted">{ar.settings_workingHoursTo}</span>
+                              <span className="text-xs text-on-surface-variant">{ar.settings_workingHoursTo}</span>
                               <TimeWheelPicker value={schedule[d].end} onChange={(v) => updateDay(d, { end: v })} />
                             </div>
                           ) : (
-                            <span className="text-xs text-text-muted">{ar.doctor_dayOff}</span>
+                            <span className="text-xs text-on-surface-variant">{ar.doctor_dayOff}</span>
                           )}
                         </div>
                       ))}
@@ -214,13 +214,13 @@ export default function DoctorFormModal({ open, doctor, onSave, onClose }: Docto
               )}
 
               {error && (
-                <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+                <p role="alert" className="rounded-xl bg-error-container px-3 py-2.5 text-sm text-error">
                   {error}
                 </p>
               )}
 
               <div className="flex justify-end gap-3 pt-2">
-                <Button type="button" variant="secondary" onClick={onClose}>
+                <Button type="button" variant="text" onClick={onClose}>
                   {ar.common_cancel}
                 </Button>
                 <Button type="submit" loading={saving}>

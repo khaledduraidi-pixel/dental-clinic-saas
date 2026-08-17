@@ -64,7 +64,7 @@ export default function AppointmentDetailPanel({
     <AnimatePresence>
       {appointment && (
         <motion.div
-          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-black/30"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -72,21 +72,21 @@ export default function AppointmentDetailPanel({
           onClick={onClose}
         >
           <motion.aside
-            className="fixed inset-y-0 start-0 flex w-full max-w-md flex-col bg-surface shadow-2xl"
+            className="fixed inset-y-0 start-0 flex w-full max-w-md flex-col bg-surface"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between border-b border-border p-6">
+            <div className="flex items-start justify-between p-4">
               <div>
-                <h2 className="text-lg font-bold text-text">{appointment.patients?.name ?? '—'}</h2>
-                <p className="mt-1 font-mono text-sm text-text-muted" dir="ltr">
+                <h2 className="text-title-lg font-normal text-on-surface">{appointment.patients?.name ?? '—'}</h2>
+                <p className="mt-1 font-mono text-sm text-on-surface-variant" dir="ltr">
                   {appointment.patients?.phone}
                 </p>
               </div>
-              <Button variant="ghost" onClick={onClose} className="h-9 w-9 px-0">
+              <Button variant="text" onClick={onClose} className="h-9 w-9 px-0">
                 ✕
               </Button>
             </div>
@@ -132,7 +132,7 @@ export default function AppointmentDetailPanel({
               {onResendReminder && appointment.status !== 'cancelled' && (
                 <div>
                   <Button
-                    variant="secondary"
+                    variant="text"
                     className="w-full"
                     loading={resendState === 'sending'}
                     onClick={handleResend}
@@ -149,13 +149,13 @@ export default function AppointmentDetailPanel({
               )}
             </div>
 
-            <div className="flex justify-end gap-3 border-t border-border p-6">
+            <div className="flex justify-end gap-3 p-4">
               {appointment.status !== 'cancelled' && (
                 <Button variant="danger" onClick={() => setCancelConfirmOpen(true)}>
                   {ar.appt_cancelAppointment}
                 </Button>
               )}
-              <Button variant="secondary" onClick={() => onEdit(appointment)}>
+              <Button variant="text" onClick={() => onEdit(appointment)}>
                 {ar.common_edit}
               </Button>
             </div>
@@ -181,8 +181,8 @@ export default function AppointmentDetailPanel({
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <dt className="text-text-muted">{label}</dt>
-      <dd className="font-medium text-text">{children}</dd>
+      <dt className="text-on-surface-variant">{label}</dt>
+      <dd className="font-medium text-on-surface">{children}</dd>
     </div>
   )
 }

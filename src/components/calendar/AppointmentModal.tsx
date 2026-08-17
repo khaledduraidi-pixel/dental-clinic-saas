@@ -193,7 +193,7 @@ export default function AppointmentModal({
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -201,20 +201,20 @@ export default function AppointmentModal({
             onClick={onClose}
           >
             <motion.div
-              className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-surface p-6 shadow-2xl"
+              className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-surface-high p-6"
               initial={{ opacity: 0, scale: 0.95, y: 8 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 8 }}
               transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-lg font-bold text-text">
+              <h2 className="text-title-lg font-normal text-on-surface">
                 {appointment ? ar.appt_editTitle : ar.appt_newTitle}
               </h2>
 
               <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-text">{ar.appt_patient}</label>
+                  <label className="mb-1.5 block text-sm font-medium text-on-surface">{ar.appt_patient}</label>
                   <PatientCombobox
                     patients={patients}
                     selectedPatientId={patientId}
@@ -225,7 +225,7 @@ export default function AppointmentModal({
                     }}
                   />
                   {patientId && !lastVisitLoading && (
-                    <p className="mt-1.5 rounded-lg bg-bg px-2.5 py-1.5 text-xs text-text-muted">
+                    <p className="mt-1.5 rounded-lg bg-surface px-2.5 py-1.5 text-xs text-on-surface-variant">
                       {lastVisit ? (
                         <>
                           {ar.appt_lastVisit}: {formatDateAr(lastVisit.starts_at, clinicTimezone)} —{' '}
@@ -280,7 +280,7 @@ export default function AppointmentModal({
                     onChange={(e) => setDateStr(e.target.value)}
                   />
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="apptTime">
+                    <label className="mb-1.5 block text-sm font-medium text-on-surface" htmlFor="apptTime">
                       {ar.appt_time}
                     </label>
                     <TimeWheelPicker id="apptTime" value={timeStr} onChange={setTimeStr} />
@@ -288,7 +288,7 @@ export default function AppointmentModal({
                 </div>
 
                 {showsOutsideHoursWarning && (
-                  <p className="rounded-lg bg-warning-soft px-2.5 py-1.5 text-xs text-warning">
+                  <p className="rounded-lg bg-warning-container px-2.5 py-1.5 text-xs text-warning">
                     {ar.doctor_outsideHoursWarning}
                   </p>
                 )}
@@ -316,13 +316,13 @@ export default function AppointmentModal({
                 />
 
                 {error && (
-                  <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+                  <p role="alert" className="rounded-xl bg-error-container px-3 py-2.5 text-sm text-error">
                     {error}
                   </p>
                 )}
 
                 <div className="flex justify-end gap-3 pt-2">
-                  <Button type="button" variant="secondary" onClick={onClose}>
+                  <Button type="button" variant="text" onClick={onClose}>
                     {ar.common_cancel}
                   </Button>
                   <Button type="submit" loading={saving}>

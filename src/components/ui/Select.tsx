@@ -31,11 +31,11 @@ export default function Select({
         <label htmlFor={fieldId} className={labelClasses}>
           {label}
           {required && (
-            <span aria-hidden="true" className="text-accent">
+            <span aria-hidden="true" className="text-error">
               *
             </span>
           )}
-          {optionalHint && <span className="text-xs font-normal text-text-muted">({optionalHint})</span>}
+          {optionalHint && <span className="text-label-sm font-normal text-on-surface-variant">({optionalHint})</span>}
         </label>
       )}
       <select
@@ -43,7 +43,7 @@ export default function Select({
         required={required}
         aria-invalid={error ? true : undefined}
         aria-describedby={hasMessage ? `${fieldId}-desc` : undefined}
-        className={`h-11 ${controlClasses(Boolean(error))} ${className}`}
+        className={`h-14 ${controlClasses(Boolean(error))} ${className}`}
         {...rest}
       >
         {children}

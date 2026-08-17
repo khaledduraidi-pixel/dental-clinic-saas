@@ -59,14 +59,14 @@ export default function WhatsAppSettings() {
   })
 
   return (
-    <section className="rounded-2xl border border-border bg-surface p-6">
+    <section className="rounded-md bg-surface-low p-4 sm:p-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-bold text-text">{ar.settings_whatsapp}</h2>
+        <h2 className="text-title font-semibold text-on-surface">{ar.settings_whatsapp}</h2>
         {!loading && clinic && (
           <span
             className={
               'rounded-full px-2.5 py-1 text-xs font-medium ' +
-              (connected ? 'bg-success-soft text-success' : 'bg-border text-text-muted')
+              (connected ? 'bg-success-container text-success' : 'bg-outline-variant text-on-surface-variant')
             }
           >
             {connected ? ar.whatsapp_connected : ar.whatsapp_notConnected}
@@ -109,12 +109,12 @@ export default function WhatsAppSettings() {
           />
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-text">{ar.whatsapp_templatePreview}</label>
-            <p className="rounded-xl bg-bg px-3 py-2.5 text-sm text-text">{previewBody}</p>
+            <label className="mb-1.5 block text-sm font-medium text-on-surface">{ar.whatsapp_templatePreview}</label>
+            <p className="rounded-xl bg-surface px-3 py-2.5 text-sm text-on-surface">{previewBody}</p>
           </div>
 
           {error && (
-            <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+            <p role="alert" className="rounded-xl bg-error-container px-3 py-2.5 text-sm text-error">
               {error}
             </p>
           )}

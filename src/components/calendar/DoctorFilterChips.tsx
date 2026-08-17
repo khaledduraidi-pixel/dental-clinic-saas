@@ -57,10 +57,10 @@ function Chip({
       transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
       onClick={onClick}
       className={
-        'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium outline outline-2 outline-offset-2 outline-transparent transition-colors focus-visible:outline-focus ' +
+        'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium outline outline-2 outline-offset-2 outline-transparent transition-colors focus-visible:outline-primary ' +
         (active
-          ? 'border-transparent bg-primary-soft text-primary-dark'
-          : 'border-border bg-surface text-text-muted hover:bg-bg')
+          ? 'border-transparent bg-primary-container text-on-primary-container'
+          : 'border-outline-variant bg-surface-low text-on-surface-variant hover:bg-surface')
       }
     >
       {color && <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />}

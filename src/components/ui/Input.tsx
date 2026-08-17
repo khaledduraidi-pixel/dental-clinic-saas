@@ -34,11 +34,11 @@ export default function Input({
         <label htmlFor={fieldId} className={labelClasses}>
           {label}
           {required && (
-            <span aria-hidden="true" className="text-accent">
+            <span aria-hidden="true" className="text-error">
               *
             </span>
           )}
-          {optionalHint && <span className="text-xs font-normal text-text-muted">({optionalHint})</span>}
+          {optionalHint && <span className="text-label-sm font-normal text-on-surface-variant">({optionalHint})</span>}
         </label>
       )}
       <div className="relative">
@@ -47,7 +47,7 @@ export default function Input({
           required={required}
           aria-invalid={error ? true : undefined}
           aria-describedby={hasMessage ? `${fieldId}-desc` : undefined}
-          className={`h-11 ${controlClasses(Boolean(error))} ${loading || error ? 'pe-9' : ''} ${className}`}
+          className={`h-14 ${controlClasses(Boolean(error))} ${loading || error ? 'pe-9' : ''} ${className}`}
           {...rest}
         />
         {loading && (
@@ -55,7 +55,7 @@ export default function Input({
             aria-hidden="true"
             className="absolute inset-y-0 end-3 flex items-center"
           >
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-primary" />
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-outline-variant border-t-primary" />
           </span>
         )}
         {!loading && error && (

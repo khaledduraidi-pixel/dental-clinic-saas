@@ -61,7 +61,7 @@ export default function PatientFormModal({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -69,14 +69,14 @@ export default function PatientFormModal({
           onClick={onClose}
         >
           <motion.div
-            className="w-full max-w-sm rounded-2xl bg-surface p-6 shadow-2xl"
+            className="w-full max-w-sm rounded-xl bg-surface-high p-6"
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 8 }}
             transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-lg font-bold text-text">
+            <h2 className="text-title-lg font-normal text-on-surface">
               {patient ? ar.patients_editTitle : ar.patients_newPatient}
             </h2>
 
@@ -90,7 +90,7 @@ export default function PatientFormModal({
                 onChange={(e) => setName(e.target.value)}
               />
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-text" htmlFor="patientPhone">
+                <label className="mb-1.5 block text-sm font-medium text-on-surface" htmlFor="patientPhone">
                   {ar.patients_phone}
                 </label>
                 <PhoneInput
@@ -112,13 +112,13 @@ export default function PatientFormModal({
               />
 
               {error && (
-                <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+                <p role="alert" className="rounded-xl bg-error-container px-3 py-2.5 text-sm text-error">
                   {error}
                 </p>
               )}
 
               <div className="flex justify-end gap-3 pt-2">
-                <Button type="button" variant="secondary" onClick={onClose}>
+                <Button type="button" variant="text" onClick={onClose}>
                   {ar.common_cancel}
                 </Button>
                 <Button type="submit" loading={saving}>

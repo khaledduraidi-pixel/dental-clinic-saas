@@ -48,7 +48,7 @@ export default function DayView({
       key: doctor.id,
       date,
       header: (
-        <div className="flex items-center justify-center gap-1.5 text-sm font-medium text-text">
+        <div className="flex items-center justify-center gap-1.5 text-sm font-medium text-on-surface">
           <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: doctor.color }} />
           {doctor.name}
         </div>

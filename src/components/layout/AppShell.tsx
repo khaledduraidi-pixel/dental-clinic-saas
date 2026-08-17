@@ -2,50 +2,91 @@ import { useState, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import ar from '../../i18n/ar'
-import Button from '../ui/Button'
+import Icon, { type IconName } from '../ui/Icon'
 import ConfirmDialog from './ConfirmDialog'
 import { useAuth } from '../../hooks/useAuth'
 
-const navItems = [
-  { to: '/', label: ar.nav_calendar, end: true },
-  { to: '/patients', label: ar.nav_patients, end: false },
-  { to: '/dashboard', label: ar.nav_dashboard, end: false },
-  { to: '/settings', label: ar.nav_settings, end: false },
+// Four destinations, same order everywhere. Mobile gets the M3 navigation bar
+// (container-height 80px, active indicator 64×32 corner-full); desktop gets
+// pill nav inside the top app bar (container-height 64px). See design.md §8.
+const navItems: { to: string; label: string; icon: IconName; end: boolean }[] = [
+  { to: '/', label: ar.nav_calendar, icon: 'calendar', end: true },
+  { to: '/patients', label: ar.nav_patients, icon: 'users', end: false },
+  { to: '/dashboard', label: ar.nav_dashboard, icon: 'chart', end: false },
+  { to: '/settings', label: ar.nav_settings, icon: 'settings', end: false },
 ]
 
-// Shared layoutId: framer-motion snapshots this element's position when it
-// unmounts on the old tab and animates the newly mounted one in from there,
-// producing a pill that slides between tabs instead of popping between them.
-function NavPill() {
+function BottomNav() {
   return (
-    <motion.span
-      layoutId="nav-active-pill"
-      className="absolute inset-0 rounded-xl bg-primary-soft"
-      transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-    />
+    <nav
+      aria-label={ar.appName}
+      className="flex h-20 shrink-0 bg-surface-low sm:hidden"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
+      {navItems.map(({ to, label, icon, end }) => (
+        <NavLink
+          key={to}
+          to={to}
+          end={end}
+          className="flex flex-1 flex-col items-center justify-center gap-1 pt-3 text-label-sm font-semibold outline outline-2 -outline-offset-4 outline-transparent focus-visible:outline-primary"
+        >
+          {({ isActive }) => (
+            <>
+              <span className="relative flex h-8 w-16 items-center justify-center">
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-indicator"
+                    className="absolute inset-0 rounded-full bg-primary-container"
+                    transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+                  />
+                )}
+                <Icon
+                  name={icon}
+                  className={
+                    'relative ' + (isActive ? 'text-on-primary-container' : 'text-on-surface-variant')
+                  }
+                />
+              </span>
+              <span className={isActive ? 'text-on-surface' : 'text-on-surface-variant'}>{label}</span>
+            </>
+          )}
+        </NavLink>
+      ))}
+    </nav>
   )
 }
 
-function NavItem({ to, label, end }: { to: string; label: string; end: boolean }) {
+function DesktopNav() {
   return (
-    <NavLink
-      to={to}
-      end={end}
-      className="relative rounded-xl px-4 py-2 text-sm font-medium outline outline-2 outline-offset-2 outline-transparent transition-colors focus-visible:outline-focus"
-    >
-      {({ isActive }) => (
-        <>
-          {isActive && <NavPill />}
-          <span
-            className={
-              'relative z-10 ' + (isActive ? 'text-primary-dark' : 'text-text-muted hover:text-text')
-            }
-          >
-            {label}
-          </span>
-        </>
-      )}
-    </NavLink>
+    <nav aria-label={ar.appName} className="hidden flex-1 items-center gap-1 sm:flex">
+      {navItems.map(({ to, label, end }) => (
+        <NavLink
+          key={to}
+          to={to}
+          end={end}
+          className="relative rounded-full px-4 py-2 text-label font-semibold outline outline-2 outline-offset-2 outline-transparent focus-visible:outline-primary"
+        >
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <motion.span
+                  layoutId="nav-indicator-desktop"
+                  className="absolute inset-0 rounded-full bg-primary-container"
+                  transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+                />
+              )}
+              <span
+                className={
+                  'relative ' + (isActive ? 'text-on-primary-container' : 'text-on-surface-variant')
+                }
+              >
+                {label}
+              </span>
+            </>
+          )}
+        </NavLink>
+      ))}
+    </nav>
   )
 }
 
@@ -54,31 +95,24 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false)
 
   return (
-    <div className="flex min-h-screen flex-col bg-bg">
-      <header className="sticky top-0 z-20 border-b border-border/60 bg-surface/70 backdrop-blur-xl backdrop-saturate-150">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-8">
-            <span className="flex items-center gap-2 text-lg font-bold tracking-tight text-primary-dark">
-              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-sm bg-accent" />
-              {ar.appName}
-            </span>
-            <nav className="hidden items-center gap-1 sm:flex">
-              {navItems.map((item) => (
-                <NavItem key={item.to} {...item} />
-              ))}
-            </nav>
-          </div>
-          <Button variant="ghost" className="px-4" onClick={() => setLogoutConfirmOpen(true)}>
-            {ar.nav_logout}
-          </Button>
-        </div>
-        <nav className="flex items-center gap-1 overflow-x-auto border-t border-border/60 px-4 py-2 sm:hidden">
-          {navItems.map((item) => (
-            <NavItem key={item.to} {...item} />
-          ))}
-        </nav>
+    <div className="flex min-h-screen flex-col bg-surface">
+      {/* top app bar — 64px, headline title-large 22/28 at weight 400 */}
+      <header className="flex h-16 shrink-0 items-center gap-4 px-4 sm:px-6">
+        <span className="text-title-lg font-normal text-on-surface">{ar.appName}</span>
+        <DesktopNav />
+        <button
+          type="button"
+          onClick={() => setLogoutConfirmOpen(true)}
+          aria-label={ar.nav_logout}
+          className="ms-auto flex h-12 w-12 items-center justify-center rounded-full text-on-surface-variant outline outline-2 outline-offset-2 outline-transparent hover:bg-surface-high focus-visible:outline-primary sm:ms-0"
+        >
+          <Icon name="logout" />
+        </button>
       </header>
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">{children}</main>
+
+      <main className="min-h-0 flex-1 px-4 pb-4 sm:px-6 sm:pb-6">{children}</main>
+
+      <BottomNav />
 
       <ConfirmDialog
         open={logoutConfirmOpen}

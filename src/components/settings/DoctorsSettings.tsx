@@ -27,10 +27,10 @@ export default function DoctorsSettings() {
   }
 
   return (
-    <section className="rounded-2xl border border-border bg-surface p-6">
+    <section className="rounded-md bg-surface-low p-4 sm:p-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-bold text-text">{ar.settings_doctors}</h2>
-        <Button variant="secondary" className="h-9 px-3 text-xs" onClick={openAddForm}>
+        <h2 className="text-title font-semibold text-on-surface">{ar.settings_doctors}</h2>
+        <Button variant="text" className="h-9 px-3 text-xs" onClick={openAddForm}>
           {ar.settings_addDoctor}
         </Button>
       </div>
@@ -39,7 +39,7 @@ export default function DoctorsSettings() {
         {loading && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-14 w-full" />)}
 
         {!loading && error && (
-          <p role="alert" className="rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+          <p role="alert" className="rounded-xl bg-error-container px-3 py-2.5 text-sm text-error">
             {ar.common_error}
           </p>
         )}
@@ -49,28 +49,28 @@ export default function DoctorsSettings() {
           doctors.map((doctor) => (
             <div
               key={doctor.id}
-              className="flex items-center justify-between rounded-xl border border-border px-4 py-3"
+              className="flex items-center justify-between rounded-xl border border-outline-variant px-4 py-3"
             >
               <div className="flex items-center gap-3">
                 <span className="h-3 w-3 rounded-full" style={{ backgroundColor: doctor.color }} />
-                <span className={'text-sm font-medium ' + (doctor.active ? 'text-text' : 'text-text-muted line-through')}>
+                <span className={'text-sm font-medium ' + (doctor.active ? 'text-on-surface' : 'text-on-surface-variant line-through')}>
                   {doctor.name}
                 </span>
                 <span
                   className={
                     'rounded-full px-2 py-0.5 text-xs ' +
-                    (doctor.active ? 'bg-success-soft text-success' : 'bg-border text-text-muted')
+                    (doctor.active ? 'bg-success-container text-success' : 'bg-outline-variant text-on-surface-variant')
                   }
                 >
                   {doctor.active ? ar.doctor_active : ar.doctor_inactive}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="ghost" className="h-8 px-3 text-xs" onClick={() => openEditForm(doctor)}>
+                <Button variant="text" className="h-8 px-3 text-xs" onClick={() => openEditForm(doctor)}>
                   {ar.common_edit}
                 </Button>
                 <Button
-                  variant="ghost"
+                  variant="text"
                   className="h-8 px-3 text-xs"
                   onClick={() => setDoctorActive(doctor.id, !doctor.active)}
                 >

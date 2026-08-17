@@ -1,55 +1,66 @@
 @import 'tailwindcss';
 
-/* Hallmark · genre: modern-minimal · macrostructure: Clinical Canvas (bespoke, app-shape)
- * theme: custom (teal + terracotta, tuned) · design-system: design.md · designed-as-app
- * See /design.md for the full locked system. */
+/* Material 3 (tonal) · derived from real token files — see /design.md.
+ * Hierarchy comes from SURFACE TONE, not borders or shadows. */
 @theme {
-  --font-sans: 'IBM Plex Sans Arabic', 'Cairo', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --font-sans: 'Cairo', system-ui, sans-serif;
 
-  /* paper / surface — warm-tinted, never pure white/flat */
-  --color-bg: oklch(98% 0.008 85);
-  --color-surface: oklch(99.5% 0.004 85);
-  --color-surface-raised: oklch(100% 0 0);
+  /* ---- tonal surfaces ---- */
+  --color-surface: #f7fafa;
+  --color-surface-low: #eff4f4;
+  --color-surface-high: #e1eaeb;
+  --color-surface-highest: #dae4e5;
+  --color-on-surface: #171d1e;
+  --color-on-surface-variant: #3f4949;
+  --color-outline-variant: #bec8c9;
 
-  /* ink */
-  --color-text: oklch(20% 0.01 50);
-  --color-text-muted: oklch(46% 0.012 60);
+  /* ---- primary ---- */
+  --color-primary: #00696e;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #c2e3e5;
+  --color-on-primary-container: #00201f;
 
-  /* neutrals */
-  --color-border: oklch(90% 0.006 70);
-  --color-border-strong: oklch(80% 0.008 70);
+  /* ---- semantic (data, exempt from the single-accent rule) ---- */
+  --color-error: #ba1a1a;
+  --color-error-container: #f4dad7;
+  --color-on-error-container: #410002;
+  --color-success: #106b3e;
+  --color-success-container: #d2e9da;
+  --color-on-success-container: #04361c;
+  --color-warning: #7a5300;
+  --color-warning-container: #f5e4c3;
+  --color-on-warning-container: #261a00;
 
-  /* accent 1 — teal (trust / primary action) */
-  --color-primary: oklch(51% 0.11 186);
-  --color-primary-dark: oklch(38% 0.075 188);
-  --color-primary-soft: oklch(94% 0.045 182);
-  --color-primary-ink: oklch(99% 0.004 85);
+  /* ---- M3 type scale (size/line-height pairs) ---- */
+  --text-display: 2.25rem;
+  --text-display--line-height: 2.5rem;
+  --text-headline: 1.5rem;
+  --text-headline--line-height: 2rem;
+  --text-title-lg: 1.375rem;
+  --text-title-lg--line-height: 1.75rem;
+  --text-title: 1rem;
+  --text-title--line-height: 1.5rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.25rem;
+  --text-label: 0.875rem;
+  --text-label--line-height: 1.25rem;
+  --text-label-sm: 0.75rem;
+  --text-label-sm--line-height: 1rem;
 
-  /* accent 2 — terracotta (warmth / secondary highlight) */
-  --color-accent: oklch(64% 0.15 48);
-  --color-accent-soft: oklch(95% 0.03 70);
-  --color-accent-ink: oklch(99% 0.004 85);
+  /* ---- M3 shape scale ---- */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
 
-  /* focus */
-  --color-focus: oklch(58% 0.14 186);
+  /* Note: no custom --spacing-{xs,sm,md,…} block. Tailwind v4 reserves those
+   * names for its own width / max-width / height scale; overriding them once
+   * collapsed every max-w-sm and max-w-lg in this app to a few px. Use the
+   * numeric scale instead. */
 
-  /* semantic — status colours; exempt from accent restraint, they encode data */
-  --color-success: oklch(48% 0.13 148);
-  --color-success-soft: oklch(95% 0.045 150);
-  --color-warning: oklch(52% 0.14 55);
-  --color-warning-soft: oklch(95% 0.055 90);
-  --color-error: oklch(48% 0.17 27);
-  --color-error-soft: oklch(93% 0.035 22);
-
-  /* Note: no custom --spacing-* named scale here — Tailwind v4 reserves
-   * --spacing-{xs,sm,md,lg,xl,2xl,3xl,...} for its own built-in max-width /
-   * width / height scale (that's what max-w-sm, max-w-lg etc. resolve
-   * against). Redefining them collapsed every max-w-* utility in the app to
-   * a few px. The bare numeric scale (p-4, gap-2, ...) already covers all
-   * spacing needs via Tailwind's default --spacing: 0.25rem multiplier. */
-
-  /* motion — entering/exiting eases; springs stay inline in framer-motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
 }
@@ -61,9 +72,8 @@ body,
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-feature-settings: 'tnum' 1;
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
 }
 
 /* Western Arabic numerals everywhere, even inside Arabic text runs */
@@ -71,8 +81,21 @@ body {
   font-variant-numeric: normal;
 }
 
-/* Tabular figures for any dir="ltr" numeral run (times, phone numbers,
- * counts) set in the mono outlier — never used as a second prose voice. */
-[dir='ltr'] {
+/* Latin runs inside Arabic prose (times, phone numbers) reorder across line
+ * breaks unless isolated. bdi isolates by default; code does not. */
+code {
+  unicode-bidi: isolate;
+}
+
+/* Figures that line up in a column */
+.tnum {
   font-variant-numeric: tabular-nums;
+}
+
+/* M3 state layers: a translucent overlay of the foreground, never a hue swap */
+@utility state-hover {
+  background-color: color-mix(in oklab, var(--color-on-surface) 8%, transparent);
+}
+@utility state-press {
+  background-color: color-mix(in oklab, var(--color-on-surface) 10%, transparent);
 }

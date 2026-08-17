@@ -1,20 +1,21 @@
-// Shared class fragments for Input / Select / Textarea so the three
-// primitives render one consistent 8-state contract (default · hover ·
-// focus · active · disabled · loading · error · success). Border-width is
-// always 1px — every state change goes to background-color / outline /
-// border-color, never geometry (no-layout-shift rule).
+// M3 outlined text field. Border-width never changes between states — the
+// focus indicator is an inset box-shadow instead (Primer's explicit rule:
+// "use an inset box-shadow instead of a border to prevent layout shift").
 export function controlClasses(hasError: boolean) {
   return [
-    'block w-full rounded-xl border bg-surface px-3 text-sm text-text transition-colors',
-    'placeholder:text-text-muted/70',
-    'outline outline-2 outline-offset-1 outline-transparent',
-    'hover:bg-bg',
-    'focus:outline-focus',
-    'disabled:cursor-not-allowed disabled:opacity-55',
-    hasError ? 'border-error focus:border-error' : 'border-border focus:border-primary/60',
+    'block w-full rounded-xs bg-surface px-4 text-body text-on-surface',
+    'border border-on-surface-variant/45',
+    'placeholder:text-on-surface-variant/70',
+    'transition-[background-color,box-shadow]',
+    'hover:bg-surface-low',
+    'outline-none',
+    hasError
+      ? 'border-error shadow-[inset_0_0_0_1px_var(--color-error)] focus:shadow-[inset_0_0_0_2px_var(--color-error)]'
+      : 'focus:shadow-[inset_0_0_0_2px_var(--color-primary)] focus:border-primary',
+    'disabled:cursor-not-allowed disabled:opacity-40',
   ].join(' ')
 }
 
-export const labelClasses = 'mb-1.5 flex items-baseline gap-1.5 text-sm font-medium text-text'
-export const helperClasses = 'mt-1.5 min-h-5 text-xs text-text-muted'
-export const errorClasses = 'mt-1.5 min-h-5 text-xs font-medium text-error'
+export const labelClasses = 'mb-1.5 flex items-baseline gap-1.5 text-body-sm font-semibold text-on-surface'
+export const helperClasses = 'mt-1.5 min-h-5 text-label-sm text-on-surface-variant'
+export const errorClasses = 'mt-1.5 min-h-5 text-label-sm font-semibold text-error'

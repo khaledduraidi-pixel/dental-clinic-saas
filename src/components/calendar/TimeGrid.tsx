@@ -71,7 +71,7 @@ export default function TimeGrid({
         {/* header row */}
         <div />
         {columns.map((col) => (
-          <div key={col.key} className="border-b border-border px-2 pb-2 text-center">
+          <div key={col.key} className="border-b border-outline-variant px-2 pb-2 text-center">
             {col.header}
           </div>
         ))}
@@ -86,7 +86,7 @@ export default function TimeGrid({
             return (
               <span
                 key={i}
-                className="absolute -translate-y-1/2 text-xs text-text-muted"
+                className="absolute -translate-y-1/2 text-xs text-on-surface-variant"
                 style={{ top: minutesFromStart * pxPerMinute, insetInlineEnd: '0.5rem' }}
               >
                 {timeLabel(hour, minute)}
@@ -110,7 +110,7 @@ export default function TimeGrid({
           return (
             <div
               key={col.key}
-              className="relative border-s border-border"
+              className="relative border-s border-outline-variant"
               style={{ height: totalHeight }}
             >
               {col.offHoursRanges?.map((range, i) => (
@@ -120,9 +120,9 @@ export default function TimeGrid({
                   style={{
                     top: range.startMinutes * pxPerMinute,
                     height: (range.endMinutes - range.startMinutes) * pxPerMinute,
-                    backgroundColor: 'color-mix(in oklch, var(--color-border-strong) 55%, transparent)',
+                    backgroundColor: 'color-mix(in oklch, var(--color-outline-variant) 55%, transparent)',
                     backgroundImage:
-                      'repeating-linear-gradient(-45deg, color-mix(in oklch, var(--color-text-muted) 12%, transparent) 0, color-mix(in oklch, var(--color-text-muted) 12%, transparent) 1px, transparent 1px, transparent 8px)',
+                      'repeating-linear-gradient(-45deg, color-mix(in oklch, var(--color-on-surface-variant) 12%, transparent) 0, color-mix(in oklch, var(--color-on-surface-variant) 12%, transparent) 1px, transparent 1px, transparent 8px)',
                   }}
                 />
               ))}
@@ -141,7 +141,7 @@ export default function TimeGrid({
                     key={i}
                     type="button"
                     onClick={() => onSlotClick(col.key, slot)}
-                    className="absolute inset-x-0 border-b border-border/60 outline outline-2 -outline-offset-2 outline-transparent transition-colors hover:bg-primary-soft/40 focus-visible:outline-focus"
+                    className="absolute inset-x-0 border-b border-outline-variant/60 outline outline-2 -outline-offset-2 outline-transparent transition-colors hover:bg-primary-container/40 focus-visible:outline-primary"
                     style={{ top: i * SLOT_HEIGHT_PX, height: SLOT_HEIGHT_PX }}
                   />
                 )
@@ -167,7 +167,7 @@ export default function TimeGrid({
                     key={appt.id}
                     type="button"
                     onClick={() => onAppointmentClick(appt)}
-                    className="absolute z-10 overflow-hidden rounded-lg px-2 py-1 text-start shadow-sm outline outline-2 outline-offset-1 outline-transparent transition-transform hover:z-20 hover:scale-[1.02] focus-visible:outline-focus"
+                    className="absolute z-10 overflow-hidden rounded-lg px-2 py-1 text-start shadow-sm outline outline-2 outline-offset-1 outline-transparent transition-transform hover:z-20 hover:scale-[1.02] focus-visible:outline-primary"
                     style={{
                       top,
                       height,
@@ -178,12 +178,12 @@ export default function TimeGrid({
                     }}
                   >
                     <div className="flex items-center justify-between gap-1">
-                      <span className="truncate text-xs font-semibold text-text">
+                      <span className="truncate text-xs font-semibold text-on-surface">
                         {appt.patients?.name ?? '—'}
                       </span>
                     </div>
                     <div className="mt-0.5 flex items-center gap-1">
-                      <span className="truncate text-[11px] text-text-muted">
+                      <span className="truncate text-[11px] text-on-surface-variant">
                         {visitTypeLabel(appt.visit_type)}
                       </span>
                     </div>
@@ -198,7 +198,7 @@ export default function TimeGrid({
         })}
       </div>
       {columns.every((c) => c.appointments.length === 0) && (
-        <p className="py-6 text-center text-sm text-text-muted">{ar.calendar_noAppointments}</p>
+        <p className="py-6 text-center text-sm text-on-surface-variant">{ar.calendar_noAppointments}</p>
       )}
     </div>
   )

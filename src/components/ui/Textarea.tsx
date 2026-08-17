@@ -29,11 +29,11 @@ export default function Textarea({
         <label htmlFor={fieldId} className={labelClasses}>
           {label}
           {required && (
-            <span aria-hidden="true" className="text-accent">
+            <span aria-hidden="true" className="text-error">
               *
             </span>
           )}
-          {optionalHint && <span className="text-xs font-normal text-text-muted">({optionalHint})</span>}
+          {optionalHint && <span className="text-label-sm font-normal text-on-surface-variant">({optionalHint})</span>}
         </label>
       )}
       <textarea
@@ -41,7 +41,7 @@ export default function Textarea({
         required={required}
         aria-invalid={error ? true : undefined}
         aria-describedby={hasMessage ? `${fieldId}-desc` : undefined}
-        className={`min-h-24 resize-y py-2.5 ${controlClasses(Boolean(error))} ${className}`}
+        className={`min-h-28 resize-y py-3 ${controlClasses(Boolean(error))} ${className}`}
         {...rest}
       />
       {hasMessage && (

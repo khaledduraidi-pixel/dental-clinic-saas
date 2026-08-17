@@ -1,37 +1,35 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { motion } from 'framer-motion'
+import Icon, { type IconName } from './Icon'
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
+// M3 filled-tonal button: container-height 40px, corner-full,
+// label-large 14px/600. State is a translucent overlay, never a hue swap.
+type Variant = 'tonal' | 'filled' | 'text' | 'danger'
 
-type ConflictingHandlers =
-  | 'onDrag'
-  | 'onDragStart'
-  | 'onDragEnd'
-  | 'onAnimationStart'
-  | 'onAnimationEnd'
-  | 'className'
+type Conflicting =
+  | 'onDrag' | 'onDragStart' | 'onDragEnd'
+  | 'onAnimationStart' | 'onAnimationEnd' | 'className'
 
-interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, ConflictingHandlers> {
+interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, Conflicting> {
   variant?: Variant
   loading?: boolean
+  icon?: IconName
   children: ReactNode
   className?: string
 }
 
-const variantClasses: Record<Variant, string> = {
-  primary: 'bg-primary text-primary-ink hover:bg-primary-dark',
-  secondary: 'bg-surface text-primary-dark border border-primary/40 hover:bg-primary-soft',
-  ghost: 'bg-transparent text-text-muted hover:bg-bg hover:text-text',
-  danger: 'bg-error text-primary-ink hover:opacity-90',
+const variants: Record<Variant, string> = {
+  tonal: 'bg-primary-container text-on-primary-container hover:brightness-[.97]',
+  filled: 'bg-primary text-on-primary hover:brightness-110',
+  text: 'bg-transparent text-primary hover:bg-primary/8',
+  danger: 'bg-error-container text-on-error-container hover:brightness-[.97]',
 }
 
-// Press feedback fires on pointer-down (whileTap), settles with a critically
-// damped spring on release — never a fixed-duration CSS transition, so a fast
-// double-press never has to wait one animation out before the next begins.
 export default function Button({
-  variant = 'primary',
+  variant = 'tonal',
   loading = false,
   disabled,
+  icon,
   children,
   className = '',
   ...rest
@@ -43,10 +41,11 @@ export default function Button({
       transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
       disabled={disabled || loading}
       className={[
-        'flex h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-medium transition-colors',
-        'outline outline-2 outline-offset-2 outline-transparent focus-visible:outline-focus',
-        'disabled:pointer-events-none disabled:opacity-50',
-        variantClasses[variant],
+        'inline-flex h-10 items-center justify-center gap-2 rounded-full px-4',
+        'text-label font-semibold transition-[filter,background-color]',
+        'outline outline-2 outline-offset-2 outline-transparent focus-visible:outline-primary',
+        'disabled:pointer-events-none disabled:opacity-40',
+        variants[variant],
         className,
       ].join(' ')}
       {...rest}
@@ -54,7 +53,10 @@ export default function Button({
       {loading ? (
         <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
       ) : (
-        children
+        <>
+          {icon && <Icon name={icon} size={18} />}
+          {children}
+        </>
       )}
     </motion.button>
   )

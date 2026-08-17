@@ -67,10 +67,10 @@ function downloadTemplate() {
 }
 
 const STATUS_STYLES: Record<ProcessedRow['status'], string> = {
-  new: 'bg-success-soft text-success',
-  duplicate: 'bg-border text-text-muted',
-  duplicateInFile: 'bg-border text-text-muted',
-  invalid: 'bg-error-soft text-error',
+  new: 'bg-success-container text-success',
+  duplicate: 'bg-outline-variant text-on-surface-variant',
+  duplicateInFile: 'bg-outline-variant text-on-surface-variant',
+  invalid: 'bg-error-container text-error',
 }
 
 export default function PatientsImport() {
@@ -140,13 +140,13 @@ export default function PatientsImport() {
   const newCount = processed.filter((r) => r.status === 'new').length
 
   return (
-    <section className="rounded-2xl border border-border bg-surface p-6">
-      <h2 className="text-base font-bold text-text">{ar.import_title}</h2>
-      <p className="mt-1.5 text-sm text-text-muted">{ar.import_intro}</p>
-      <p className="mt-1 text-xs text-text-muted">{ar.import_excelHint}</p>
+    <section className="rounded-md bg-surface-low p-4 sm:p-6">
+      <h2 className="text-title font-semibold text-on-surface">{ar.import_title}</h2>
+      <p className="mt-1.5 text-sm text-on-surface-variant">{ar.import_intro}</p>
+      <p className="mt-1 text-xs text-on-surface-variant">{ar.import_excelHint}</p>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <label className="h-11 cursor-pointer rounded-xl border border-primary/40 bg-surface px-4 text-sm font-medium leading-[2.75rem] text-primary-dark outline outline-2 outline-offset-2 outline-transparent transition-colors hover:bg-primary-soft has-[:focus-visible]:outline-focus">
+        <label className="h-11 cursor-pointer rounded-xl border border-primary/40 bg-surface-low px-4 text-sm font-medium leading-[2.75rem] text-on-primary-container outline outline-2 outline-offset-2 outline-transparent transition-colors hover:bg-primary-container has-[:focus-visible]:outline-primary">
           {parsed ? ar.import_changeFile : ar.import_chooseFile}
           <input
             type="file"
@@ -158,22 +158,22 @@ export default function PatientsImport() {
         <button
           type="button"
           onClick={downloadTemplate}
-          className="rounded-md text-sm font-medium text-primary-dark outline outline-2 outline-offset-2 outline-transparent hover:underline focus-visible:outline-focus"
+          className="rounded-md text-sm font-medium text-on-primary-container outline outline-2 outline-offset-2 outline-transparent hover:underline focus-visible:outline-primary"
         >
           {ar.import_downloadTemplate}
         </button>
       </div>
 
       {error && (
-        <p role="alert" className="mt-3 rounded-xl bg-error-soft px-3 py-2.5 text-sm text-error">
+        <p role="alert" className="mt-3 rounded-xl bg-error-container px-3 py-2.5 text-sm text-error">
           {error}
         </p>
       )}
 
       {result && (
-        <div className="mt-4 rounded-xl bg-success-soft p-4 text-sm text-success">
+        <div className="mt-4 rounded-xl bg-success-container p-4 text-sm text-success">
           <p className="font-medium">{ar.import_done}</p>
-          <p className="mt-1 text-text-muted">
+          <p className="mt-1 text-on-surface-variant">
             {result.inserted} {ar.import_summaryNew}
             {result.duplicates > 0 && <> · {result.duplicates} {ar.import_summaryDuplicate}</>}
             {result.invalid > 0 && <> · {result.invalid} {ar.import_summaryInvalid}</>}
@@ -236,11 +236,11 @@ export default function PatientsImport() {
           </Select>
 
           <div>
-            <p className="mb-2 text-xs font-medium text-text-muted">{ar.import_preview}</p>
-            <div className="overflow-x-auto rounded-xl border border-border">
+            <p className="mb-2 text-xs font-medium text-on-surface-variant">{ar.import_preview}</p>
+            <div className="overflow-x-auto rounded-xl border border-outline-variant">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border bg-bg text-start text-xs text-text-muted">
+                  <tr className="border-b border-outline-variant bg-surface text-start text-xs text-on-surface-variant">
                     <th className="px-3 py-2 text-start">{ar.patients_name}</th>
                     <th className="px-3 py-2 text-start">{ar.patients_phone}</th>
                     <th className="px-3 py-2 text-start">{ar.import_statusColumn}</th>
@@ -248,7 +248,7 @@ export default function PatientsImport() {
                 </thead>
                 <tbody>
                   {processed.slice(0, 10).map((row, i) => (
-                    <tr key={i} className="border-b border-border last:border-0">
+                    <tr key={i} className="border-b border-outline-variant last:border-0">
                       <td className="px-3 py-2">{row.name || '—'}</td>
                       <td className="px-3 py-2 font-mono" dir="ltr">
                         {row.phoneNormalized ?? (row.phoneRaw || '—')}
@@ -268,7 +268,7 @@ export default function PatientsImport() {
             </div>
           </div>
 
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-on-surface-variant">
             {newCount} {ar.import_summaryNew}
             {processed.length - newCount > 0 && (
               <>
